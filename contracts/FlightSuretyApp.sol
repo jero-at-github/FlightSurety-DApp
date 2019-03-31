@@ -10,6 +10,9 @@ import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 /* FlightSurety Smart Contract                      */
 /************************************************** */
 contract FlightSuretyApp {
+
+    FlightSuretyData flightSuretyData;
+
     using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
 
     /********************************************************************************************/
@@ -73,10 +76,12 @@ contract FlightSuretyApp {
     */
     constructor
                                 (
+                                    address dataContract
                                 ) 
                                 public 
     {
         contractOwner = msg.sender;
+        flightSuretyData = FlightSuretyData(dataContract); // instance the data contract
     }
 
     /********************************************************************************************/
@@ -102,6 +107,7 @@ contract FlightSuretyApp {
     */   
     function registerAirline
                             (   
+                                address airlineAddress
                             )
                             external
                             pure
@@ -335,3 +341,7 @@ contract FlightSuretyApp {
 // endregion
 
 }   
+
+contract FlightSuretyData {
+    
+}
