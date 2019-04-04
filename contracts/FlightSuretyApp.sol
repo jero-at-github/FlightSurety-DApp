@@ -38,6 +38,8 @@ contract FlightSuretyApp {
     }
     mapping(bytes32 => Flight) private flights;
 
+// region function modifiers
+
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
     /********************************************************************************************/
@@ -66,6 +68,8 @@ contract FlightSuretyApp {
         _;
     }
 
+// endregion
+
     /********************************************************************************************/
     /*                                       CONSTRUCTOR                                        */
     /********************************************************************************************/
@@ -74,15 +78,15 @@ contract FlightSuretyApp {
     * @dev Contract constructor
     *
     */
-    constructor
-                                (
-                                    address dataContract
-                                ) 
-                                public 
+    constructor(address dataContract, address firstAirline) public 
     {
         contractOwner = msg.sender;
-        flightSuretyData = FlightSuretyData(dataContract); // instance the data contract        
+        
+        flightSuretyData = FlightSuretyData(dataContract); // instance the data contract             
+        flightSuretyData.registerAirline(firstAirline);
     }
+
+// utility functions
 
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
@@ -118,6 +122,8 @@ contract FlightSuretyApp {
         operational = mode;           
     }
 
+// endregion
+
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
@@ -127,12 +133,8 @@ contract FlightSuretyApp {
     * @dev Add an airline to the registration queue
     *
     */   
-    function registerAirline
-                            (   
-                                address airlineAddress
-                            )
-                            external
-                            pure
+    function registerAirline(address airlineAddress)
+                            external                           
                             returns(bool success, uint256 votes)
     {
         return (success, 0);
@@ -365,6 +367,5 @@ contract FlightSuretyApp {
 }   
 
 contract FlightSuretyData {
-    function isOperational() public view returns(bool);
-    function setOperatingStatus(bool mode) external; 
+    function registerAirline(address airlineAddress) external returns(bool success, uint256 votes);
 }

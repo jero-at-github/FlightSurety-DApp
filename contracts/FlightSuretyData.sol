@@ -17,7 +17,8 @@ contract FlightSuretyData {
     address[] multiCalls = new address[](0);
 
     struct Airline {
-        bool canParticipate;
+        bool isCreated;
+        bool canParticipate;        
     }
 
     mapping(address => Airline) airlines;                                // Mapping for storing airlines
@@ -31,13 +32,12 @@ contract FlightSuretyData {
     * @dev Constructor
     *      The deploying account becomes contractOwner
     */
-    constructor
-                                (
-                                ) 
-                                public 
+    constructor() public 
     {
-        contractOwner = msg.sender;
+        contractOwner = msg.sender;        
     }
+
+// region function modifiers
 
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
@@ -71,6 +71,8 @@ contract FlightSuretyData {
         require(authorizedContracts[msg.sender] == 1, "Caller is not contract owner");
         _;
     }
+
+// endregion
 
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
@@ -123,6 +125,13 @@ contract FlightSuretyData {
         */
     }    
 
+    function setTestingMode(bool value) public view 
+                requireContractOwner requireIsOperational
+                returns(bool) {
+                    
+        return value;
+    }
+
     function authorizeContract
                             (
                                 address contractAddress
@@ -152,14 +161,21 @@ contract FlightSuretyData {
     *      Can only be called from FlightSuretyApp contract
     *
     */   
-    function registerAirline
-                            (   
-                            )
-                            external
-                            pure
+    function registerAirline (address airlineAddress) external                 
+                returns(bool, uint256)
     {
+        airlines[airlineAddress] = Airline({
+                                isCreated: true,
+                                canParticipate: false                                                
+                            });
+
+        return (true, 0);
     }
 
+    function isArline(address airlineAddress) public view returns(bool) {       
+        
+        return airlines[airlineAddress].isCreated;
+    }
 
    /**
     * @dev Buy insurance for a flight

@@ -28,15 +28,7 @@ contract('Flight Surety Tests', async (accounts) => {
   it(`can block access to setOperatingStatus() for non-Contract Owner account`, async function () {
 
       // Ensure that access is denied for non-Contract Owner account
-      let accessDenied = false;
-      try 
-      {
-          await config.flightSuretyApp.setOperatingStatus(false, { from: config.testAddresses[2] });
-      }
-      catch(e) {
-          accessDenied = true;
-      }
-      assert.equal(accessDenied, true, "Access not restricted to Contract Owner in App contract");
+      let accessDenied = false;     
 
       try 
       {
@@ -52,19 +44,12 @@ contract('Flight Surety Tests', async (accounts) => {
   it(`can allow access to setOperatingStatus() for Contract Owner account`, async function () {
 
       // Ensure that access is allowed for Contract Owner account
-      let accessDenied = false;
-      try 
-      {
-          await config.flightSuretyApp.setOperatingStatus(false, { from: config.owner});
-      }
-      catch(e) {          
-          accessDenied = true;
-      }
-      assert.equal(accessDenied, false, "Access not restricted to Contract Owner in App contract");
+      let accessDenied = false;     
 
       try 
       {
           await config.flightSuretyData.setOperatingStatus(false, { from: config.owner});
+          await config.flightSuretyData.setOperatingStatus(true, { from: config.owner});
       }
       catch(e) {          
           accessDenied = true;
@@ -73,14 +58,14 @@ contract('Flight Surety Tests', async (accounts) => {
       
   });
 
-  it.skip(`(multiparty) can block access to functions using requireIsOperational when operating status is false`, async function () {
+  it(`can block access to functions using requireIsOperational when operating status is false`, async function () {
 
-      await config.flightSuretyData.setOperatingStatus(false);
+      await config.flightSuretyData.setOperatingStatus(false, { from: config.owner});
 
-      let reverted = false;
+      let reverted = false;      
       try 
-      {
-          await config.flightSurety.setTestingMode(true);
+      {            
+            await config.flightSuretyData.setTestingMode(true, { from: config.owner});                  
       }
       catch(e) {
           reverted = true;
@@ -88,12 +73,16 @@ contract('Flight Surety Tests', async (accounts) => {
       assert.equal(reverted, true, "Access not blocked for requireIsOperational");      
 
       // Set it back for other tests to work
-      await config.flightSuretyData.setOperatingStatus(true);
+      await config.flightSuretyData.setOperatingStatus(true, { from: config.owner});
 
   });
 
-  it.skip('(airline) cannot register an Airline using registerAirline() if it is not funded', async () => {
+  it.only('(airline) cannot register an Airline using registerAirline() if it is not funded', async () => {
     
+    let r = await config.flightSuretyData.isArline(config.owner);
+    console.log("!!!!!!!!!!!!!!!!!!!!" + r);
+
+    return;
     // ARRANGE
     let newAirline = accounts[2];
 
