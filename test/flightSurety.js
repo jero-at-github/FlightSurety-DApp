@@ -18,9 +18,11 @@ contract('Flight Surety Tests', async (accounts) => {
   it(`has correct initial isOperational() value`, async function () {    
 
     // Get operating status
-    let status = await config.flightSuretyData.isOperational.call({ from: config.owner});    
-    assert.equal(status, true, "Incorrect initial operating status value");
-
+    let status = await config.flightSuretyApp.isOperational.call({ from: config.owner});    
+    assert.equal(status, true, "Incorrect initial operating status value in App contract");
+    
+    status = await config.flightSuretyData.isOperational.call({ from: config.owner});    
+    assert.equal(status, true, "Incorrect initial operating status value in Data contract");
   });
 
   it(`can block access to setOperatingStatus() for non-Contract Owner account`, async function () {
@@ -29,12 +31,21 @@ contract('Flight Surety Tests', async (accounts) => {
       let accessDenied = false;
       try 
       {
+          await config.flightSuretyApp.setOperatingStatus(false, { from: config.testAddresses[2] });
+      }
+      catch(e) {
+          accessDenied = true;
+      }
+      assert.equal(accessDenied, true, "Access not restricted to Contract Owner in App contract");
+
+      try 
+      {
           await config.flightSuretyData.setOperatingStatus(false, { from: config.testAddresses[2] });
       }
       catch(e) {
           accessDenied = true;
       }
-      assert.equal(accessDenied, true, "Access not restricted to Contract Owner");
+      assert.equal(accessDenied, true, "Access not restricted to Contract Owner in Data contract");
             
   });
 
@@ -44,12 +55,21 @@ contract('Flight Surety Tests', async (accounts) => {
       let accessDenied = false;
       try 
       {
+          await config.flightSuretyApp.setOperatingStatus(false, { from: config.owner});
+      }
+      catch(e) {          
+          accessDenied = true;
+      }
+      assert.equal(accessDenied, false, "Access not restricted to Contract Owner in App contract");
+
+      try 
+      {
           await config.flightSuretyData.setOperatingStatus(false, { from: config.owner});
       }
       catch(e) {          
           accessDenied = true;
       }
-      assert.equal(accessDenied, false, "Access not restricted to Contract Owner");
+      assert.equal(accessDenied, false, "Access not restricted to Contract Owner in Data contract");
       
   });
 

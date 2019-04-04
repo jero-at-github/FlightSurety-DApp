@@ -11,6 +11,7 @@ import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 /************************************************** */
 contract FlightSuretyApp {
 
+    bool private operational = true;            
     FlightSuretyData flightSuretyData;
 
     using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
@@ -87,14 +88,34 @@ contract FlightSuretyApp {
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
 
-    function isOperational() public view returns(bool) {
-
-        return flightSuretyData.isOperational();
+    /**
+    * @dev Get operating status of contract
+    *
+    * @return A bool that is the current operating status
+    */      
+    function isOperational() 
+                            public 
+                            view 
+                            requireContractOwner
+                            returns(bool) 
+    {
+        return operational;
     }
 
-    function setOperatingStatus(bool mode) external {
-        
-        flightSuretyData.setOperatingStatus(mode);
+    /**
+    * @dev Sets contract operations on/off
+    *
+    * When operational mode is disabled, all write transactions except for this one will fail
+    */    
+    function setOperatingStatus
+                            (
+                                bool mode
+                            ) 
+                            external
+                            requireContractOwner                            
+    {
+        require(mode != operational, "New mode must be different from existing mode");   
+        operational = mode;           
     }
 
     /********************************************************************************************/
