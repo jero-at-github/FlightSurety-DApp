@@ -2,7 +2,7 @@ pragma solidity ^0.4.25;
 
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract FlightSuretyData {
+contract FlightSuretyData {    
     using SafeMath for uint256;
 
     /********************************************************************************************/
@@ -10,7 +10,17 @@ contract FlightSuretyData {
     /********************************************************************************************/
 
     address private contractOwner;                                      // Account used to deploy contract
-    bool private operational = true;                                    // Blocks all state changes throughout the contract if false
+    mapping(address => uint256) private authorizedContracts;            // External contracts authorized to call functions of data contract
+    bool private operational = true;                                    // Blocks all state changes throughout the contract if false    
+
+    uint constant MIN_MULTICALLS = 2;
+    address[] multiCalls = new address[](0);
+
+    struct Airline {
+        bool canParticipate;
+    }
+
+    mapping(address => Airline) airlines;                                // Mapping for storing airlines
 
     /********************************************************************************************/
     /*                                       EVENT DEFINITIONS                                  */
@@ -56,6 +66,12 @@ contract FlightSuretyData {
         _;
     }
 
+    modifier requireIsCallerAuthorized()
+    {
+        require(authorizedContracts[msg.sender] == 1, "Caller is not contract owner");
+        _;
+    }
+
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
@@ -68,11 +84,11 @@ contract FlightSuretyData {
     function isOperational() 
                             public 
                             view 
+                            requireContractOwner
                             returns(bool) 
     {
         return operational;
     }
-
 
     /**
     * @dev Sets contract operations on/off
@@ -84,9 +100,47 @@ contract FlightSuretyData {
                                 bool mode
                             ) 
                             external
-                            requireContractOwner 
+                            requireContractOwner                            
     {
-        operational = mode;
+        require(mode != operational, "New mode must be different from existing mode");   
+        operational = mode;           
+
+        /*
+        bool isDuplicate = false;
+        for(uint c=0; c < multiCalls.length; c++) {
+            if (multiCalls[c] == msg.sender) {
+                isDuplicate = true;
+                break;
+            }
+        }
+        require(!isDuplicate, "Caller has already called this function.");
+
+        multiCalls.push(msg.sender);
+        if (multiCalls.length >= MIN_MULTICALLS) {
+            operational = mode;      
+            multiCalls = new address[](0);      
+        }
+        */
+    }    
+
+    function authorizeContract
+                            (
+                                address contractAddress
+                            )
+                            external
+                            requireContractOwner
+    {
+        authorizedContracts[contractAddress] = 1;
+    }
+
+    function deauthorizeContract
+                            (
+                                address contractAddress
+                            )
+                            external
+                            requireContractOwner
+    {
+        delete authorizedContracts[contractAddress];
     }
 
     /********************************************************************************************/

@@ -37,7 +37,6 @@ contract FlightSuretyApp {
     }
     mapping(bytes32 => Flight) private flights;
 
- 
     /********************************************************************************************/
     /*                                       FUNCTION MODIFIERS                                 */
     /********************************************************************************************/
@@ -81,19 +80,21 @@ contract FlightSuretyApp {
                                 public 
     {
         contractOwner = msg.sender;
-        flightSuretyData = FlightSuretyData(dataContract); // instance the data contract
+        flightSuretyData = FlightSuretyData(dataContract); // instance the data contract        
     }
 
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
     /********************************************************************************************/
 
-    function isOperational() 
-                            public 
-                            pure 
-                            returns(bool) 
-    {
-        return true;  // Modify to call data contract's status
+    function isOperational() public view returns(bool) {
+
+        return flightSuretyData.isOperational();
+    }
+
+    function setOperatingStatus(bool mode) external {
+        
+        flightSuretyData.setOperatingStatus(mode);
     }
 
     /********************************************************************************************/
@@ -343,5 +344,6 @@ contract FlightSuretyApp {
 }   
 
 contract FlightSuretyData {
-    
+    function isOperational() public view returns(bool);
+    function setOperatingStatus(bool mode) external; 
 }
