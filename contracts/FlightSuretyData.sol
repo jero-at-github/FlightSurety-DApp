@@ -12,11 +12,11 @@ contract FlightSuretyData {
     address private contractOwner;                              // Account used to deploy contract
     mapping(address => uint256) private authorizedContracts;    // External contracts authorized to call functions of data contract
     bool private operational = true;                            // Blocks all state changes throughout the contract if false    
-    uint8 IART = 4;                                             // (I)nitial (A)riline (R)egistration (T)hreshold
-    uint256 numRegAirlines = 0;                                 // Number of registered airlines
+    uint8 private IART = 4;                                             // (I)nitial (A)riline (R)egistration (T)hreshold
+    uint256 private  numRegAirlines = 0;                                 // Number of registered airlines
+    uint private FUND_PRICE = 10 ether;
 
-    uint constant MIN_MULTICALLS = 2;
-    address[] multiCalls = new address[](0);
+    mapping(address => address[]) private registrationVotes;    // mapping for store the multiparty airline registration votes    
 
     struct Airline {
         bool isCreated;
@@ -75,13 +75,39 @@ contract FlightSuretyData {
         _;
     }
 
-    modifier requireIsFundedAirline(address sender)
+    modifier requireIsSenderFundedAirline(address sender)
     {
         require(airlines[sender].isFunded == true, "The airline is not funded!");
         _;
     }    
 
+    modifier requireIsAirlineNotRegistered(address airlineAddress)
+    {
+        require(airlines[airlineAddress].isCreated == false, "The airline is already registered!");
+        _;
+    }    
+
+    modifier requireIsAirlineNotFunded(address airlineAddress)
+    {
+        require(airlines[airlineAddress].isFunded == false, "The airline was already funded!");
+        _;
+    }    
+     
+    modifier paidEnough() { 
+        require(msg.value >= FUND_PRICE, "Ether sent is not enough to fund an airline!"); 
+        _;
+    }
+
+    modifier checkValue(address sender) {
+        _;
+        uint amountToReturn = msg.value - FUND_PRICE;
+        sender.transfer(amountToReturn);
+    }
+
+
 // endregion
+
+// region utility region
 
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
@@ -114,24 +140,7 @@ contract FlightSuretyData {
                             requireContractOwner                            
     {
         require(mode != operational, "New mode must be different from existing mode");   
-        operational = mode;           
-
-        /*
-        bool isDuplicate = false;
-        for(uint c=0; c < multiCalls.length; c++) {
-            if (multiCalls[c] == msg.sender) {
-                isDuplicate = true;
-                break;
-            }
-        }
-        require(!isDuplicate, "Caller has already called this function.");
-
-        multiCalls.push(msg.sender);
-        if (multiCalls.length >= MIN_MULTICALLS) {
-            operational = mode;      
-            multiCalls = new address[](0);      
-        }
-        */
+        operational = mode;                  
     }    
 
     function setTestingMode(bool value) public view 
@@ -161,9 +170,23 @@ contract FlightSuretyData {
         delete authorizedContracts[contractAddress];
     }
 
+// endregion
+
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
+
+   /**
+    * First airline registration hapenning when the contract is deployed.
+    */
+    function fundAirline(address sender) external payable
+                requireIsAirlineNotFunded(sender) 
+                paidEnough()        
+                checkValue(sender) {
+
+        // register the airline
+        airlines[sender].isFunded = true; 
+    }
 
    /**
     * @dev Add an airline to the registration queue
@@ -171,12 +194,11 @@ contract FlightSuretyData {
     *
     */   
     function registerAirline(address airlineAddress, address sender) external 
-                requireIsFundedAirline(sender)       
                 requireIsCallerAuthorized         
+                requireIsAirlineNotRegistered(airlineAddress)
+                requireIsSenderFundedAirline(sender)                       
                 returns(bool success, uint256 votes)
-    {
-        bool result = false;
-
+    {            
         // check if we are in the initial airlines registration threshold
         if (numRegAirlines < IART) {
 
@@ -188,21 +210,52 @@ contract FlightSuretyData {
                     isFunded: false                                               
                 });
 
-            result = true;    
+            votes = 0;
+            success = true;    
         }
+        // Multipary case
         else {
-            // Multiparty goes here...
-            result = false;
+                    
+            //address[] memory currentVotes = registrationVotes[airlineAddress];            
+
+            bool isDuplicate = false;
+            for(uint c=0; c < registrationVotes[airlineAddress].length; c++) {
+                if (registrationVotes[airlineAddress][c] == sender) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+            require(!isDuplicate, "Caller has already called this function.");
+
+            registrationVotes[airlineAddress].push(sender);            
+
+            if (registrationVotes[airlineAddress].length >= numRegAirlines / 2) {
+                
+                // register the airline
+                airlines[airlineAddress] = 
+                    Airline({
+                        isCreated: true,
+                        isRegistered: true,
+                        isFunded: false                                               
+                    });
+
+                success = true;                     
+            }   
+            else {
+                success = false;
+            }        
+
+            votes = registrationVotes[airlineAddress].length;
         }        
 
-        if (result) {
+        if (success) {
             numRegAirlines ++;
         } 
 
-        return (result, 0);
+        return (success, votes);
     }
 
-    /**
+   /**
     * First airline registration hapenning when the contract is deployed.
     */
     function firstAirlineRegistration(address airlineAddress) external {
@@ -216,10 +269,12 @@ contract FlightSuretyData {
             });
     }
 
-    /**
+   /**
     * Checks if a certain airline exists.
     */
-    function isAirline(address airlineAddress) public view returns(bool) {       
+    function isAirline(address airlineAddress) public view 
+                requireIsCallerAuthorized                
+                returns(bool) {       
         
         return airlines[airlineAddress].isCreated;
     }

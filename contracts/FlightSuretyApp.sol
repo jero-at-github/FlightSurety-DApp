@@ -86,7 +86,7 @@ contract FlightSuretyApp {
         flightSuretyData.firstAirlineRegistration(firstAirline);    // first airline registration
     }
 
-// utility functions
+// region utility functions
 
     /********************************************************************************************/
     /*                                       UTILITY FUNCTIONS                                  */
@@ -130,6 +130,14 @@ contract FlightSuretyApp {
 
   
    /**
+    * First airline registration hapenning when the contract is deployed.
+    */
+    function fundAirline() external payable               
+    {
+       flightSuretyData.fundAirline(msg.sender);
+    }
+
+   /**
     * @dev Add an airline to the registration queue
     *
     */   
@@ -139,7 +147,7 @@ contract FlightSuretyApp {
         return flightSuretyData.registerAirline(airlineAddress, msg.sender);        
     }
 
-     /**
+   /**
     * Checks if a certain airline exists.
     */
     function isAirline(address airlineAddress) public view returns(bool) {       
@@ -378,4 +386,5 @@ contract FlightSuretyData {
     function registerAirline(address airlineAddress, address sender) external returns(bool success, uint256 votes);
     function firstAirlineRegistration(address airlineAddress) external;
     function isAirline(address airlineAddress) public view returns(bool);
+    function fundAirline(address sender) external payable;
 }
