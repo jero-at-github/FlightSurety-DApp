@@ -150,11 +150,9 @@ contract('Flight Surety Tests', async (accounts) => {
                 success = false;
             }       
             assert.equal(success, false, "A fund requires enough ether.");                
-            
-await config.flightSuretyApp.fundAirline({ from: config.testAddresses[2], value: FUND_PRICE });            
-return;
-            // fund up to 4 airlines                
-            for (let i = 2; i <= 4; i ++) {
+
+            // register and fund up to 4 airlines                
+            for (let i = 2; i <= 4; i ++) {               
                 await config.flightSuretyApp.fundAirline({ from: config.testAddresses[i], value: FUND_PRICE });
             }             
         });

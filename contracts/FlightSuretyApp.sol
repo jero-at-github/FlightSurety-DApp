@@ -134,7 +134,7 @@ contract FlightSuretyApp {
     */
     function fundAirline() external payable               
     {
-       flightSuretyData.fundAirline(msg.sender);
+       flightSuretyData.fundAirline(msg.sender, msg.value);
     }
 
    /**
@@ -386,5 +386,5 @@ contract FlightSuretyData {
     function registerAirline(address airlineAddress, address sender) external returns(bool success, uint256 votes);
     function firstAirlineRegistration(address airlineAddress) external;
     function isAirline(address airlineAddress) public view returns(bool);
-    function fundAirline(address sender) external payable;
+    function fundAirline(address sender, uint value) external payable;
 }

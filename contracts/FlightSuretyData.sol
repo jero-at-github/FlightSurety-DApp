@@ -93,14 +93,14 @@ contract FlightSuretyData {
         _;
     }    
      
-    modifier paidEnough() { 
-        require(msg.value >= FUND_PRICE, "Ether sent is not enough to fund an airline!"); 
+    modifier paidEnough(uint value) { 
+        require(value >= FUND_PRICE, "Ether sent is not enough to fund an airline!"); 
         _;
     }
 
-    modifier checkValue(address sender) {
+    modifier checkValue(address sender, uint value) {
         _;
-        uint amountToReturn = msg.value - FUND_PRICE;
+        uint amountToReturn = value - FUND_PRICE;
         sender.transfer(amountToReturn);
     }
 
@@ -179,10 +179,10 @@ contract FlightSuretyData {
    /**
     * First airline registration hapenning when the contract is deployed.
     */
-    function fundAirline(address sender) external payable
+    function fundAirline(address sender, uint value) external payable
                 requireIsAirlineNotFunded(sender) 
-                paidEnough()        
-                checkValue(sender) {
+                paidEnough(value)        
+                checkValue(sender, value) {
 
         // register the airline
         airlines[sender].isFunded = true; 
