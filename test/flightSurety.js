@@ -77,27 +77,34 @@ contract('Flight Surety Tests', async (accounts) => {
 
   });
 
-  it.only('(airline) cannot register an Airline using registerAirline() if it is not funded', async () => {
+  it.only('Airlines registration', async () => {
     
-    let r = await config.flightSuretyData.isArline(config.owner);
-    console.log("!!!!!!!!!!!!!!!!!!!!" + r);
+    let secondAirline = accounts[2];
+    let thirdAirline = accounts[3];
+    
+    let existAirline = null;
 
-    return;
-    // ARRANGE
-    let newAirline = accounts[2];
+    // first airline was automatically registered when deploying the contract
+    existAirline = await config.flightSuretyApp.isAirline.call(config.firstAirline); 
+    assert.equal(existAirline, true, "The first arline should be registered automatically.");    
 
-    // ACT
+    // first airline is funded, it should success registering an airline
+    await config.flightSuretyApp.registerAirline(secondAirline, {from: config.firstAirline});        
+    existAirline = await config.flightSuretyApp.isAirline.call(secondAirline);  
+    assert.equal(existAirline, true, "The registered airline doesn't exist.");   
+    
+    // second airline is NOT funded, it shouldn't success registering an airline
+    let success = true;
     try {
-        await config.flightSuretyApp.registerAirline(newAirline, {from: config.firstAirline});
+        await config.flightSuretyApp.registerAirline(thirdAirline, {from: config.secondAirline});    
     }
-    catch(e) {
+    catch (error) {
+        success = false;
+    }    
+    assert.equal(success, false, "A registration action from a non funded airline should fail.");
 
-    }
-    let result = await config.flightSuretyData.isAirline.call(newAirline); 
-
-    // ASSERT
-    assert.equal(result, false, "Airline should not be able to register another airline if it hasn't provided funding");
-
+    existAirline = await config.flightSuretyApp.isAirline.call(thirdAirline);     
+    assert.equal(existAirline, false, "The registered airline shouldn't exist.");       
   });
  
 

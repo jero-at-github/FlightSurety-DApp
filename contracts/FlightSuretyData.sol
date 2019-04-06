@@ -9,16 +9,19 @@ contract FlightSuretyData {
     /*                                       DATA VARIABLES                                     */
     /********************************************************************************************/
 
-    address private contractOwner;                                      // Account used to deploy contract
-    mapping(address => uint256) private authorizedContracts;            // External contracts authorized to call functions of data contract
-    bool private operational = true;                                    // Blocks all state changes throughout the contract if false    
+    address private contractOwner;                              // Account used to deploy contract
+    mapping(address => uint256) private authorizedContracts;    // External contracts authorized to call functions of data contract
+    bool private operational = true;                            // Blocks all state changes throughout the contract if false    
+    uint8 IART = 4;                                             // (I)nitial (A)riline (R)egistration (T)hreshold
+    uint256 numRegAirlines = 0;                                 // Number of registered airlines
 
     uint constant MIN_MULTICALLS = 2;
     address[] multiCalls = new address[](0);
 
     struct Airline {
         bool isCreated;
-        bool canParticipate;        
+        bool isRegistered;
+        bool isFunded;        
     }
 
     mapping(address => Airline) airlines;                                // Mapping for storing airlines
@@ -71,6 +74,12 @@ contract FlightSuretyData {
         require(authorizedContracts[msg.sender] == 1, "Caller is not contract owner");
         _;
     }
+
+    modifier requireIsFundedAirline(address sender)
+    {
+        require(airlines[sender].isFunded == true, "The airline is not funded!");
+        _;
+    }    
 
 // endregion
 
@@ -161,18 +170,56 @@ contract FlightSuretyData {
     *      Can only be called from FlightSuretyApp contract
     *
     */   
-    function registerAirline (address airlineAddress) external                 
-                returns(bool, uint256)
+    function registerAirline(address airlineAddress, address sender) external 
+                requireIsFundedAirline(sender)       
+                requireIsCallerAuthorized         
+                returns(bool success, uint256 votes)
     {
-        airlines[airlineAddress] = Airline({
-                                isCreated: true,
-                                canParticipate: false                                                
-                            });
+        bool result = false;
 
-        return (true, 0);
+        // check if we are in the initial airlines registration threshold
+        if (numRegAirlines < IART) {
+
+            // register the airline
+            airlines[airlineAddress] = 
+                Airline({
+                    isCreated: true,
+                    isRegistered: true,
+                    isFunded: false                                               
+                });
+
+            result = true;    
+        }
+        else {
+            // Multiparty goes here...
+            result = false;
+        }        
+
+        if (result) {
+            numRegAirlines ++;
+        } 
+
+        return (result, 0);
     }
 
-    function isArline(address airlineAddress) public view returns(bool) {       
+    /**
+    * First airline registration hapenning when the contract is deployed.
+    */
+    function firstAirlineRegistration(address airlineAddress) external {
+
+        // register the airline
+        airlines[airlineAddress] = 
+            Airline({
+                isCreated: true,
+                isRegistered: true,
+                isFunded: true
+            });
+    }
+
+    /**
+    * Checks if a certain airline exists.
+    */
+    function isAirline(address airlineAddress) public view returns(bool) {       
         
         return airlines[airlineAddress].isCreated;
     }

@@ -80,10 +80,10 @@ contract FlightSuretyApp {
     */
     constructor(address dataContract, address firstAirline) public 
     {
-        contractOwner = msg.sender;
+        contractOwner = msg.sender; // set contract owner
         
-        flightSuretyData = FlightSuretyData(dataContract); // instance the data contract             
-        flightSuretyData.registerAirline(firstAirline);
+        flightSuretyData = FlightSuretyData(dataContract);          // instance the data contract             
+        flightSuretyData.firstAirlineRegistration(firstAirline);    // first airline registration
     }
 
 // utility functions
@@ -133,11 +133,18 @@ contract FlightSuretyApp {
     * @dev Add an airline to the registration queue
     *
     */   
-    function registerAirline(address airlineAddress)
-                            external                           
-                            returns(bool success, uint256 votes)
+    function registerAirline(address airlineAddress) public
+                returns(bool success, uint256 votes)
     {
-        return (success, 0);
+        return flightSuretyData.registerAirline(airlineAddress, msg.sender);        
+    }
+
+     /**
+    * Checks if a certain airline exists.
+    */
+    function isAirline(address airlineAddress) public view returns(bool) {       
+        
+        return flightSuretyData.isAirline(airlineAddress);
     }
 
 
@@ -367,5 +374,8 @@ contract FlightSuretyApp {
 }   
 
 contract FlightSuretyData {
-    function registerAirline(address airlineAddress) external returns(bool success, uint256 votes);
+
+    function registerAirline(address airlineAddress, address sender) external returns(bool success, uint256 votes);
+    function firstAirlineRegistration(address airlineAddress) external;
+    function isAirline(address airlineAddress) public view returns(bool);
 }
