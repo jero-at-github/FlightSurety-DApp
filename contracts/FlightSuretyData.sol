@@ -12,8 +12,9 @@ contract FlightSuretyData {
     address private contractOwner;                              // Account used to deploy contract
     mapping(address => uint256) private authorizedContracts;    // External contracts authorized to call functions of data contract
     bool private operational = true;                            // Blocks all state changes throughout the contract if false    
-    uint8 private IART = 4;                                             // (I)nitial (A)riline (R)egistration (T)hreshold
-    uint256 private  numRegAirlines = 0;                                 // Number of registered airlines
+    uint8 private IART = 4;                                     // (I)nitial (A)riline (R)egistration (T)hreshold
+    uint256 private  numRegAirlines = 0;                        // Number of registered airlines
+    uint256 private  numFundedAirlines = 0;                     // Number of funded airlines
     uint private FUND_PRICE = 10 ether;
 
     mapping(address => address[]) private registrationVotes;    // mapping for store the multiparty airline registration votes    
@@ -194,8 +195,9 @@ contract FlightSuretyData {
                 paidEnough(value)        
                 checkValue(sender, value) {
 
-        // register the airline
+        // set the airline as funded
         airlines[sender].isFunded = true; 
+        numFundedAirlines ++;
     }
 
    /**
@@ -210,7 +212,7 @@ contract FlightSuretyData {
                 returns(bool success, uint256 votes)
     {            
         // check if we are in the initial airlines registration threshold
-        if (numRegAirlines < IART) {
+        if (numFundedAirlines < IART) {
 
             // register the airline
             airlines[airlineAddress] = 
@@ -239,7 +241,7 @@ contract FlightSuretyData {
 
             registrationVotes[airlineAddress].push(sender);            
 
-            if (registrationVotes[airlineAddress].length >= numRegAirlines / 2) {
+            if (registrationVotes[airlineAddress].length >= numFundedAirlines / 2) {
                 
                 // register the airline
                 airlines[airlineAddress] = 
@@ -279,6 +281,7 @@ contract FlightSuretyData {
             });
 
         numRegAirlines ++;            
+        numFundedAirlines ++;
     }
 
    /**
