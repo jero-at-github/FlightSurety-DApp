@@ -1,6 +1,7 @@
 
 var Test = require('../config/testConfig.js');
 var BigNumber = require('bignumber.js');
+const truffleAssert = require('truffle-assertions');
 
 contract('Flight Surety Airlines Tests', async (accounts) => {   
 
@@ -53,51 +54,57 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
 
         it("Airlines can't register if they are not funded", async () => {
             
-            // 5th airline is NOT funded, it shouldn't success registering an airline
-            let success = true;
-            try {
-                await config.flightSuretyApp.registerAirline(config.testAddresses[6], { from: config.testAddresses[5] });
-            }
-            catch (error) {
-                success = false;
-            }
-            assert.equal(success, false, "A registration action from a non funded airline should fail.");
-
-            existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[6]);
-            assert.equal(existAirline, false, "The registered airline shouldn't exist.");
+            // 5th airline is NOT funded, it shouldn't success registering an airline            
+            await truffleAssert.reverts(
+                config.flightSuretyApp.registerAirline(config.testAddresses[6], { from: config.testAddresses[5] }), 
+                "revert " + "The airline is not funded!"
+            );
         });
 
         it("Airlines can't be more than once registered", async () => {
-            
-            let success = true;
-
+                        
             // try to fund twice an airline
-            try {
-                await config.flightSuretyApp.fundAirline({ from: config.firstAirline, value: FUND_PRICE });
-                success = true;
-            }
-            catch (error) {                
-                success = false;
-            }       
-            assert.equal(success, false, "An airline can't be funded more than once.");    
+            await truffleAssert.reverts(
+                config.flightSuretyApp.fundAirline({ from: config.firstAirline, value: FUND_PRICE }), 
+                "revert " + "The airline was already funded!"
+            );
         });
 
         it("Airlines can't register if they don't provide enough fund", async () => {            
 
             // try to fund an airline with no enough ether
             let notEnoughEther = web3.utils.toWei("2", "ether");
+
+            // A fund requires enough ether.
+            await truffleAssert.reverts(
+                config.flightSuretyApp.fundAirline({ from: config.testAddresses[6], value: notEnoughEther }), 
+                "revert " + "Ether sent is not enough to fund an airline!"
+            );
+        });
+
+        it("test", async () => {            
+
+            // try to fund an airline with no enough ether
+            let notEnoughEther = web3.utils.toWei("2", "ether");
             
-            success = null;
+            success = true;
             try {
-                await config.flightSuretyApp.fundAirline({ from: config.testAddresses[2], value: notEnoughEther });
-                success = true;
+                await config.flightSuretyApp.fundAirline({ from: config.testAddresses[7], value: notEnoughEther });
+                success = false;
+                //assert.equal(success, false, "A fund requires enough ether.");                
+                return;
             }
             catch (error) {                
                 success = false;
-            }       
-            assert.equal(success, false, "A fund requires enough ether.");                
+            }                   
         });
 
+        it("a", async () => {
+            // register 5th airline
+            await config.flightSuretyApp.registerAirline(config.testAddresses[5], { from: config.testAddresses[2] });
+            existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[5]);
+            assert.equal(existAirline, true, "Beyond the 4th airline the registration has to use multyparty.");   
+        });
     })
 
 });
