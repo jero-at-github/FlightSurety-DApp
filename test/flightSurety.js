@@ -97,47 +97,56 @@ contract('Flight Surety Tests', async (accounts) => {
         it('Airlines registration (no multiparty)', async () => {
             
             let existAirline = null;
+            let airline = null;
 
             // first airline was automatically registered when deploying the contract
             existAirline = await config.flightSuretyApp.isAirline.call(config.firstAirline);
             assert.equal(existAirline, true, "The first arline should be registered automatically.");
 
-            // first airline is funded, it should success registering an airline
-            await config.flightSuretyApp.registerAirline(config.testAddresses[2], { from: config.firstAirline });
-            existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[2]);
-            assert.equal(existAirline, true, "The registered airline doesn't exist.");
+            // first airline is funded, it should success registering airlines           
+            // register up to 4 airlines                                
+            for (let i = 2; i <= 4; i ++) {               
 
-            // second airline is NOT funded, it shouldn't success registering an airline
+                await config.flightSuretyApp.registerAirline(config.testAddresses[i], { from: config.firstAirline });
+                existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[i]);
+                assert.equal(existAirline, true, "The registered airline doesn't exist.");                     
+            } 
+
+            // fund up to 4 airlines                                
+            for (let i = 2; i <= 4; i ++) {      
+
+                await config.flightSuretyApp.fundAirline({ from: config.testAddresses[i], value: FUND_PRICE });
+                airline = await config.flightSuretyApp.getAirline(config.testAddresses[i]);
+                assert.equal(airline.isFunded, true, "Airline was not properly funded!");                
+            }             
+
+            // register 5th airline
+            await config.flightSuretyApp.registerAirline(config.testAddresses[5], { from: config.firstAirline });
+            existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[5]);
+            assert.equal(existAirline, false, "Beyond the 4th airline the registration has to use multyparty.");          
+        });
+
+        it("Airlines can't register if they are not funded", async () => {
+           
+            // 5th airline is NOT funded, it shouldn't success registering an airline
             let success = true;
             try {
-                await config.flightSuretyApp.registerAirline(config.testAddresses[3], { from: config.testAddresses[2] });
+                await config.flightSuretyApp.registerAirline(config.testAddresses[6], { from: config.testAddresses[5] });
             }
             catch (error) {
                 success = false;
             }
             assert.equal(success, false, "A registration action from a non funded airline should fail.");
 
-            existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[3]);
+            existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[6]);
             assert.equal(existAirline, false, "The registered airline shouldn't exist.");
-
-            // register airlines till the threshold (4)
-
-            // third airline
-            await config.flightSuretyApp.registerAirline(config.testAddresses[3], { from: config.firstAirline });
-            existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[3]);
-            assert.equal(existAirline, true, "The registered airline doesn't exist.");
-
-            // fourth airline
-            await config.flightSuretyApp.registerAirline(config.testAddresses[4], { from: config.firstAirline });
-            existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[4]);
-            assert.equal(existAirline, true, "The registered airline doesn't exist.");
         });
 
-        it('Airlines can submit funding', async () => {
+        it("Airlines can't be more than once registered", async () => {
             
-            let success = null;
+            let success = true;
 
-            // try to fund an airline again                       
+            // try to fund twice an airline
             try {
                 await config.flightSuretyApp.fundAirline({ from: config.firstAirline, value: FUND_PRICE });
                 success = true;
@@ -146,6 +155,9 @@ contract('Flight Surety Tests', async (accounts) => {
                 success = false;
             }       
             assert.equal(success, false, "An airline can't be funded more than once.");    
+        });
+
+        it("Airlines can't register if they don't provide enough fund", async () => {            
 
             // try to fund an airline with no enough ether
             let notEnoughEther = web3.utils.toWei("2", "ether");
@@ -159,16 +171,6 @@ contract('Flight Surety Tests', async (accounts) => {
                 success = false;
             }       
             assert.equal(success, false, "A fund requires enough ether.");                
-
-            // register and fund up to 4 airlines                    
-            for (let i = 2; i <= 4; i ++) {               
-                await config.flightSuretyApp.fundAirline({ from: config.testAddresses[i], value: FUND_PRICE });
-            }             
-        });
-
-        it('Airlines registration (with multiparty)', async () => {
-
-            
         });
 
     })
