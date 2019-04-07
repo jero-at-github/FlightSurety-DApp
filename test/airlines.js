@@ -80,31 +80,16 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
                 config.flightSuretyApp.fundAirline({ from: config.testAddresses[6], value: notEnoughEther }), 
                 "revert " + "Ether sent is not enough to fund an airline!"
             );
-        });
+        });        
 
-        it("test", async () => {            
-
-            // try to fund an airline with no enough ether
-            let notEnoughEther = web3.utils.toWei("2", "ether");
-            
-            success = true;
-            try {
-                await config.flightSuretyApp.fundAirline({ from: config.testAddresses[7], value: notEnoughEther });
-                success = false;
-                //assert.equal(success, false, "A fund requires enough ether.");                
-                return;
-            }
-            catch (error) {                
-                success = false;
-            }                   
-        });
-
+        /*
         it("a", async () => {
             // register 5th airline
             await config.flightSuretyApp.registerAirline(config.testAddresses[5], { from: config.testAddresses[2] });
             existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[5]);
             assert.equal(existAirline, true, "Beyond the 4th airline the registration has to use multyparty.");   
         });
+        */
     })
 
 });
