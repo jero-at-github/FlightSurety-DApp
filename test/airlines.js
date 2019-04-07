@@ -85,7 +85,7 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
             // register 5th airline (first attempt)
             await config.flightSuretyApp.registerAirline(config.testAddresses[5], { from: config.testAddresses[2] });
             existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[5]);
-            assert.equal(existAirline, false, "Beyond the 4th airline the registration has to use multyparty.");          
+            assert.equal(existAirline, false, "Only 1 vote is not enough!");          
 
             // register 5th airline (second attempt using the same registrator). Has to fail.
             await truffleAssert.reverts(
@@ -96,7 +96,7 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
             // register 5th airline (third attempt using different registrator). Has to sucess.
             await config.flightSuretyApp.registerAirline(config.testAddresses[5], { from: config.testAddresses[3] });
             existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[5]);
-            assert.equal(existAirline, true, "Beyond the 4th airline the registration has to use multyparty.");   
+            assert.equal(existAirline, true, "With 2 votes should have been registered!.");              
         });
         
     })
