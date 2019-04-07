@@ -191,6 +191,7 @@ contract FlightSuretyData {
     * First airline registration hapenning when the contract is deployed.
     */
     function fundAirline(address sender, uint value) external payable
+                requireIsCallerAuthorized()
                 requireIsAirlineNotFunded(sender) 
                 paidEnough(value)        
                 checkValue(sender, value) {
@@ -206,7 +207,7 @@ contract FlightSuretyData {
     *
     */   
     function registerAirline(address airlineAddress, address sender) external 
-                requireIsCallerAuthorized         
+                requireIsCallerAuthorized()         
                 requireIsAirlineNotRegistered(airlineAddress)
                 requireIsSenderFundedAirline(sender)                       
                 returns(bool success, uint256 votes)
@@ -288,7 +289,7 @@ contract FlightSuretyData {
     * Checks if a certain airline exists.
     */
     function isAirline(address airlineAddress) public view 
-                requireIsCallerAuthorized                
+                requireIsCallerAuthorized()                
                 returns(bool) {       
         
         return airlines[airlineAddress].isCreated;
@@ -298,7 +299,7 @@ contract FlightSuretyData {
     * Gets and airline.
     */
     function getAirline(address airlineAddress) public view 
-                requireIsCallerAuthorized                
+                requireIsCallerAuthorized()                
                 returns(bool isCreated, bool isRegistered, bool isFunded) 
     {       
         
