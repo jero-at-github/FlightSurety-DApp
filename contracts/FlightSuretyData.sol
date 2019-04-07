@@ -177,6 +177,16 @@ contract FlightSuretyData {
     /********************************************************************************************/
 
    /**
+    * Get the number of registered airlines.
+    */
+    function getNumRegAirlines() external view
+                requireIsCallerAuthorized()
+                returns(uint256)
+    {
+        return numRegAirlines;
+    }
+
+   /**
     * First airline registration hapenning when the contract is deployed.
     */
     function fundAirline(address sender, uint value) external payable
@@ -267,6 +277,8 @@ contract FlightSuretyData {
                 isRegistered: true,
                 isFunded: true
             });
+
+        numRegAirlines ++;            
     }
 
    /**
@@ -277,6 +289,21 @@ contract FlightSuretyData {
                 returns(bool) {       
         
         return airlines[airlineAddress].isCreated;
+    }
+
+    /**
+    * Gets and airline.
+    */
+    function getAirline(address airlineAddress) public view 
+                requireIsCallerAuthorized                
+                returns(bool isCreated, bool isRegistered, bool isFunded) 
+    {       
+        
+        return (
+            airlines[airlineAddress].isCreated,
+            airlines[airlineAddress].isRegistered,
+            airlines[airlineAddress].isFunded
+        );
     }
 
    /**

@@ -128,6 +128,14 @@ contract FlightSuretyApp {
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
 
+   /**
+    * Get the number of registered airlines.
+    */
+    function getNumRegAirlines() external view   
+                returns(uint256)
+    {
+        return flightSuretyData.getNumRegAirlines();
+    }
   
    /**
     * First airline registration hapenning when the contract is deployed.
@@ -155,6 +163,14 @@ contract FlightSuretyApp {
         return flightSuretyData.isAirline(airlineAddress);
     }
 
+     /**
+    * Gets and airline.
+    */
+    function getAirline(address airlineAddress) public view                     
+                returns(bool isCreated, bool isRegistered, bool isFunded) 
+    {       
+        return flightSuretyData.getAirline(airlineAddress);        
+    }
 
    /**
     * @dev Register a future flight for insuring.
@@ -387,4 +403,6 @@ contract FlightSuretyData {
     function firstAirlineRegistration(address airlineAddress) external;
     function isAirline(address airlineAddress) public view returns(bool);
     function fundAirline(address sender, uint value) external payable;
+    function getAirline(address airlineAddress) public view returns(bool isCreated, bool isRegistered, bool isFunded);                                
+    function getNumRegAirlines() external view returns(uint256);
 }
