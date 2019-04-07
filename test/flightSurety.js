@@ -2,22 +2,21 @@
 var Test = require('../config/testConfig.js');
 var BigNumber = require('bignumber.js');
 
-contract('Flight Surety Tests', async (accounts) => {
-
-    var config;
-    const FUND_PRICE = web3.toWei(1, "ether");
-
-    before('setup contract', async () => {
-        config = await Test.Config(accounts);       
-
-        // autorize contractApp to call functions of contractData
-        await config.flightSuretyData.authorizeContract(config.flightSuretyApp.address);
-    });
+contract('Flight Surety Tests', async (accounts) => {   
 
     /****************************************************************************************/
     /* Operations and Settings                                                              */
     /****************************************************************************************/
     describe('Operations and settings', function () {
+
+        var config;       
+
+        before('setup contract', async () => {
+            config = await Test.Config(accounts);       
+
+            // autorize contractApp to call functions of contractData
+            await config.flightSuretyData.authorizeContract(config.flightSuretyApp.address);
+        });
 
         it(`has correct initial isOperational() value`, async function () {
 
@@ -85,6 +84,16 @@ contract('Flight Surety Tests', async (accounts) => {
     /****************************************************************************************/
     describe('Airline registrations  ', function () {       
 
+        var config;
+        const FUND_PRICE = web3.utils.toWei("10", "ether");
+
+        before('setup contract', async () => {
+            config = await Test.Config(accounts);       
+
+            // autorize contractApp to call functions of contractData
+            await config.flightSuretyData.authorizeContract(config.flightSuretyApp.address);
+        });
+
         it('Airlines registration (no multiparty)', async () => {
             
             let existAirline = null;
@@ -139,7 +148,7 @@ contract('Flight Surety Tests', async (accounts) => {
             assert.equal(success, false, "An airline can't be funded more than once.");    
 
             // try to fund an airline with no enough ether
-            let notEnoughEther = web3.toWei(0.5, "ether");
+            let notEnoughEther = web3.utils.toWei("2", "ether");
             
             success = null;
             try {
@@ -151,7 +160,7 @@ contract('Flight Surety Tests', async (accounts) => {
             }       
             assert.equal(success, false, "A fund requires enough ether.");                
 
-            // register and fund up to 4 airlines                
+            // register and fund up to 4 airlines                    
             for (let i = 2; i <= 4; i ++) {               
                 await config.flightSuretyApp.fundAirline({ from: config.testAddresses[i], value: FUND_PRICE });
             }             
