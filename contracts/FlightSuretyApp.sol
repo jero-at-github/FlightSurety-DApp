@@ -30,7 +30,8 @@ contract FlightSuretyApp {
 
     address private contractOwner;          // Account used to deploy contract
 
-    struct Flight {
+    struct Flight {        
+        string flightCode;
         bool isRegistered;
         uint8 statusCode;
         uint256 updatedTimestamp;        
@@ -149,10 +150,10 @@ contract FlightSuretyApp {
     * @dev Add an airline to the registration queue
     *
     */   
-    function registerAirline(address airlineAddress) public
+    function registerAirline(address airlineAddress, string name) public
                 returns(bool success, uint256 votes)
     {
-        return flightSuretyData.registerAirline(airlineAddress, msg.sender);        
+        return flightSuretyData.registerAirline(airlineAddress, name, msg.sender);        
     }
 
    /**
@@ -176,13 +177,22 @@ contract FlightSuretyApp {
     * @dev Register a future flight for insuring.
     *
     */  
-    function registerFlight
-                                (
-                                )
-                                external
-                                pure
-    {
-
+    function registerFlight(  
+        string flightCode,
+        bool isRegistered,
+        uint8 statusCode,
+        uint256 updatedTimestamp,
+        address airline) external
+                                
+    {        
+        bytes32 key = keccak256(abi.encodePacked(airline, flightCode));
+        flights[key] = Flight({
+                        flightCode: flightCode,
+                        isRegistered: true,
+                        statusCode: STATUS_CODE_UNKNOWN,
+                        updatedTimestamp: updatedTimestamp,
+                        airline: airline});
+       
     }
     
    /**
@@ -399,7 +409,7 @@ contract FlightSuretyApp {
 
 contract FlightSuretyData {
 
-    function registerAirline(address airlineAddress, address sender) external returns(bool success, uint256 votes);
+    function registerAirline(address airlineAddress, string name, address sender) external returns(bool success, uint256 votes);
     function firstAirlineRegistration(address airlineAddress) external;
     function isAirline(address airlineAddress) public view returns(bool);
     function fundAirline(address sender, uint value) external payable;

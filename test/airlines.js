@@ -33,7 +33,7 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
             // register up to 4 airlines                                
             for (let i = 2; i <= 4; i ++) {               
 
-                await config.flightSuretyApp.registerAirline(config.testAddresses[i], { from: config.firstAirline });
+                await config.flightSuretyApp.registerAirline(config.testAddresses[i], config.airlineNames[i], { from: config.firstAirline });
                 existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[i]);
                 assert.equal(existAirline, true, "The registered airline doesn't exist.");                     
             } 
@@ -51,7 +51,7 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
             
             // 5th airline is NOT funded, it shouldn't success registering an airline            
             await truffleAssert.reverts(
-                config.flightSuretyApp.registerAirline(config.testAddresses[6], { from: config.testAddresses[5] }), 
+                config.flightSuretyApp.registerAirline(config.testAddresses[6], config.airlineNames[6], { from: config.testAddresses[5] }), 
                 "revert " + "The airline is not funded!"
             );
         });
@@ -83,18 +83,18 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
             // we need 2 votes in order to register a new airline
 
             // register 5th airline (first attempt)
-            await config.flightSuretyApp.registerAirline(config.testAddresses[5], { from: config.testAddresses[2] });
+            await config.flightSuretyApp.registerAirline(config.testAddresses[5], config.airlineNames[5], { from: config.testAddresses[2] });
             existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[5]);
             assert.equal(existAirline, false, "Only 1 vote is not enough!");          
 
             // register 5th airline (second attempt using the same registrator). Has to fail.
             await truffleAssert.reverts(
-                config.flightSuretyApp.registerAirline(config.testAddresses[5], { from: config.testAddresses[2] }), 
+                config.flightSuretyApp.registerAirline(config.testAddresses[5], config.airlineNames[5], { from: config.testAddresses[2] }), 
                 "revert " + "Caller has already called this function."
             );          
 
             // register 5th airline (third attempt using different registrator). Has to sucess.
-            await config.flightSuretyApp.registerAirline(config.testAddresses[5], { from: config.testAddresses[3] });
+            await config.flightSuretyApp.registerAirline(config.testAddresses[5], config.airlineNames[5], { from: config.testAddresses[3] });
             existAirline = await config.flightSuretyApp.isAirline.call(config.testAddresses[5]);
             assert.equal(existAirline, true, "With 2 votes should have been registered!.");              
         });

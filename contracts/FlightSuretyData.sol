@@ -20,6 +20,7 @@ contract FlightSuretyData {
     mapping(address => address[]) private registrationVotes;    // mapping for store the multiparty airline registration votes    
 
     struct Airline {
+        string name;
         bool isCreated;
         bool isRegistered;
         bool isFunded;        
@@ -206,7 +207,7 @@ contract FlightSuretyData {
     *      Can only be called from FlightSuretyApp contract
     *
     */   
-    function registerAirline(address airlineAddress, address sender) external 
+    function registerAirline(address airlineAddress, string name, address sender) external 
                 requireIsCallerAuthorized()         
                 requireIsAirlineNotRegistered(airlineAddress)
                 requireIsSenderFundedAirline(sender)                       
@@ -218,6 +219,7 @@ contract FlightSuretyData {
             // register the airline
             airlines[airlineAddress] = 
                 Airline({
+                    name: name, 
                     isCreated: true,
                     isRegistered: true,
                     isFunded: false                                               
@@ -247,6 +249,7 @@ contract FlightSuretyData {
                 // register the airline
                 airlines[airlineAddress] = 
                     Airline({
+                        name: name,
                         isCreated: true,
                         isRegistered: true,
                         isFunded: false                                               
@@ -276,6 +279,7 @@ contract FlightSuretyData {
         // register the airline
         airlines[airlineAddress] = 
             Airline({
+                name: "Lufthansa",
                 isCreated: true,
                 isRegistered: true,
                 isFunded: true
