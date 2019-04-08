@@ -30,14 +30,15 @@ contract FlightSuretyApp {
 
     address private contractOwner;          // Account used to deploy contract
 
-    struct Flight {        
+    struct Flight {       
+        string description;
         string flightCode;
         bool isRegistered;
         uint8 statusCode;
         uint256 updatedTimestamp;        
         address airline;
     }
-    mapping(bytes32 => Flight) private flights;
+    mapping(bytes32 => Flight) public flights;    
 
 // region function modifiers
 
@@ -128,7 +129,7 @@ contract FlightSuretyApp {
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
-
+   
    /**
     * Get the number of registered airlines.
     */
@@ -177,22 +178,24 @@ contract FlightSuretyApp {
     * @dev Register a future flight for insuring.
     *
     */  
-    function registerFlight(  
+    function registerFlight(          
+        string description,
         string flightCode,
-        bool isRegistered,
-        uint8 statusCode,
         uint256 updatedTimestamp,
         address airline) external
                                 
-    {        
-        bytes32 key = keccak256(abi.encodePacked(airline, flightCode));
+    {   
+        // generate key     
+        bytes32 key = keccak256(abi.encodePacked(airline, flightCode, description));
+
+        // register flight
         flights[key] = Flight({
+                        description: description,
                         flightCode: flightCode,
                         isRegistered: true,
                         statusCode: STATUS_CODE_UNKNOWN,
                         updatedTimestamp: updatedTimestamp,
-                        airline: airline});
-       
+                        airline: airline});             
     }
     
    /**
