@@ -15,11 +15,12 @@ module.exports = function(deployer, network, accounts) {
                     contractData.authorizeContract(FlightSuretyApp.address);
 
                     let config = {
-                        localhost: {
+                        "localhost": {
                             url: 'http://localhost:7545',
                             dataAddress: FlightSuretyData.address,
                             appAddress: FlightSuretyApp.address
-                        }
+                        },
+                        "commonConfig": commonConfig
                     }
                     fs.writeFileSync(__dirname + '/../src/dapp/config.json',JSON.stringify(config, null, '\t'), 'utf-8');
                     fs.writeFileSync(__dirname + '/../src/server/config.json',JSON.stringify(config, null, '\t'), 'utf-8');
