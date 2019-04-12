@@ -67,13 +67,16 @@ function load(accounts) {
                 "flightCode": "CA115",
                 "airline": null
             }
-        ]
+        ],
+        "passengers": []
     }
 
     let result = configuration;
 
+    // Set owner address
     result.owner = accounts[0];
 
+    // Set airlines addresses
     for (let counter = 1; counter <=7; counter ++) {
         result.airlines[counter - 1].address = accounts[counter];        
     }
@@ -85,6 +88,11 @@ function load(accounts) {
     result.flights[3].airline = accounts[3]; // Iberia
     result.flights[4].airline = accounts[4]; // Ryanair
     result.flights[5].airline = accounts[5]; // Air Canada
+
+    // Set passengers addresses
+    for (let counter = 8; counter <=12; counter ++) {
+        result.passengers.push(accounts[counter]);        
+    }    
 
     return result;
 }
