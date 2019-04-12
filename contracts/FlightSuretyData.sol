@@ -274,12 +274,12 @@ contract FlightSuretyData {
    /**
     * First airline registration hapenning when the contract is deployed.
     */
-    function firstAirlineRegistration(address airlineAddress) external {
+    function firstAirlineRegistration(address firstAirlineAddress, string firstAirlineName) external {
 
         // register the airline
-        airlines[airlineAddress] = 
+        airlines[firstAirlineAddress] = 
             Airline({
-                name: "Lufthansa",
+                name: firstAirlineName,
                 isCreated: true,
                 isRegistered: true,
                 isFunded: true
@@ -304,10 +304,11 @@ contract FlightSuretyData {
     */
     function getAirline(address airlineAddress) public view 
                 requireIsCallerAuthorized()                
-                returns(bool isCreated, bool isRegistered, bool isFunded) 
+                returns(string name, bool isCreated, bool isRegistered, bool isFunded) 
     {       
         
         return (
+            airlines[airlineAddress].name,
             airlines[airlineAddress].isCreated,
             airlines[airlineAddress].isRegistered,
             airlines[airlineAddress].isFunded

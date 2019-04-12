@@ -80,12 +80,12 @@ contract FlightSuretyApp {
     * @dev Contract constructor
     *
     */
-    constructor(address dataContract, address firstAirline) public 
+    constructor(address dataContract, address firstAirlineAddress, string firstAirlineName) public 
     {
         contractOwner = msg.sender; // set contract owner
         
-        flightSuretyData = FlightSuretyData(dataContract);          // instance the data contract             
-        flightSuretyData.firstAirlineRegistration(firstAirline);    // first airline registration
+        flightSuretyData = FlightSuretyData(dataContract);                                      // instance the data contract             
+        flightSuretyData.firstAirlineRegistration(firstAirlineAddress, firstAirlineName);       // first airline registration
     }
 
 // region utility functions
@@ -169,7 +169,7 @@ contract FlightSuretyApp {
     * Gets and airline.
     */
     function getAirline(address airlineAddress) public view                     
-                returns(bool isCreated, bool isRegistered, bool isFunded) 
+                returns(string name, bool isCreated, bool isRegistered, bool isFunded) 
     {       
         return flightSuretyData.getAirline(airlineAddress);        
     }
@@ -413,9 +413,9 @@ contract FlightSuretyApp {
 contract FlightSuretyData {
 
     function registerAirline(address airlineAddress, string name, address sender) external returns(bool success, uint256 votes);
-    function firstAirlineRegistration(address airlineAddress) external;
+    function firstAirlineRegistration(address firstAirlineAddress, string firstAirlineName) external;
     function isAirline(address airlineAddress) public view returns(bool);
     function fundAirline(address sender, uint value) external payable;
-    function getAirline(address airlineAddress) public view returns(bool isCreated, bool isRegistered, bool isFunded);                                
+    function getAirline(address airlineAddress) public view returns(string name, bool isCreated, bool isRegistered, bool isFunded);                                
     function getNumRegAirlines() external view returns(uint256);
 }

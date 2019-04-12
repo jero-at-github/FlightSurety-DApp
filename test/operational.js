@@ -34,7 +34,7 @@ contract('Flight Surety Operationals Tests', async (accounts) => {
             let accessDenied = false;
 
             try {
-                await config.flightSuretyData.setOperatingStatus(false, { from: config.testAddresses[2] });
+                await config.flightSuretyData.setOperatingStatus(false, { from: config.airlines[2].address });
             }
             catch (e) {
                 accessDenied = true;
