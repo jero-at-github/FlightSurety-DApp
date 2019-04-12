@@ -185,6 +185,22 @@ contract FlightSuretyApp {
             airline);         
     }
 
+    /**
+    * @dev Buy insurance for a flight
+    *
+    */   
+    function buy(bytes32 flightKey)      
+        external
+        payable
+    {
+        flightSuretyData.buy(flightKey, msg.sender, msg.value);            
+    }
+
+    function isSuretyAlreadyBought(bytes32 flightKey) public view returns (bool)
+    {       
+        return flightSuretyData.isSuretyAlreadyBought(flightKey, msg.sender);
+    }
+
 // endregion
 
 }   
@@ -198,4 +214,6 @@ contract FlightSuretyData {
     function getAirline(address airlineAddress) public view returns(string name, bool isCreated, bool isRegistered, bool isFunded);                                
     function getNumRegAirlines() external view returns(uint256);
     function registerFlight(string description, string flightCode, uint256 updatedTimestamp, address airline) external;
+    function buy(bytes32 flightKey, address sender, uint value)  external payable;
+    function isSuretyAlreadyBought(bytes32 flightKey, address sender) public view returns (bool);
 }

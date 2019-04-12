@@ -3,7 +3,7 @@ pragma solidity ^0.4.25;
 import "../node_modules/openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract FlightSuretyData {    
-    
+
     using SafeMath for uint256;
 
     /********************************************************************************************/
@@ -28,7 +28,12 @@ contract FlightSuretyData {
     uint private MAX_BUY_PRICE = 1 ether;    
 
     mapping(address => address[]) private registrationVotes;    // mapping to store the multiparty airline registration votes    
-    //mapping(bytes32 => Flight) public sureties;                 // mapping to store the relation flight-passengers
+    mapping(bytes32 => Surety[]) public sureties;                 // mapping to store the relation flight-passengers
+
+    struct Surety {
+        address passenger;
+        uint pricePaid;
+    }
 
     struct Airline {
         string name;
@@ -139,6 +144,13 @@ contract FlightSuretyData {
         }        
     }
 
+    modifier requireIsSuretyNotBought(bytes32 flightKey, address sender) {
+        
+        bool status = isSuretyAlreadyBought(flightKey, sender);
+        require(status == false, "This passenger bought already a surety for this flight!");
+        _;
+    }
+
 // endregion
 
 // region utility region
@@ -157,7 +169,7 @@ contract FlightSuretyData {
                             view 
                             requireContractOwner
                             returns(bool) 
-    {
+    {        
         return operational;
     }
 
@@ -209,6 +221,23 @@ contract FlightSuretyData {
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
+
+    function isSuretyAlreadyBought(bytes32 flightKey, address sender) public view returns (bool)
+    {
+        bool result = false;
+
+        Surety[] memory _sureties = sureties[flightKey];
+        
+        for (uint i=0; i < _sureties.length; i++) {
+            
+            if (_sureties[i].passenger == sender) {
+                result = true;
+                break;
+            }
+        }        
+
+        return result;
+    }
 
    /**
     * Get the number of registered airlines.
@@ -569,14 +598,19 @@ contract FlightSuretyData {
     * @dev Buy insurance for a flight
     *
     */   
-    function buy(address sender, uint value)
+    function buy(bytes32 flightKey, address sender, uint value)
         requireIsCallerAuthorized()
-        requireIsAirlineNotFunded(sender) 
+        requireIsSuretyNotBought(flightKey, sender) 
         checkBuyValue(sender, value)
         external
         payable
     {
+        Surety memory surety = Surety({
+            passenger: sender,
+            pricePaid: value
+        });
 
+        sureties[flightKey].push(surety); 
     }
 
     /**
