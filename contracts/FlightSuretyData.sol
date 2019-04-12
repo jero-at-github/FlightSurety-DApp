@@ -16,8 +16,10 @@ contract FlightSuretyData {
     uint256 private  numRegAirlines = 0;                        // Number of registered airlines
     uint256 private  numFundedAirlines = 0;                     // Number of funded airlines
     uint private FUND_PRICE = 10 ether;
+    uint private MAX_BUY_PRICE = 1 ether;    
 
-    mapping(address => address[]) private registrationVotes;    // mapping for store the multiparty airline registration votes    
+    mapping(address => address[]) private registrationVotes;    // mapping to store the multiparty airline registration votes    
+    //mapping(bytes32 => Flight) public sureties;                 // mapping to store the relation flight-passengers
 
     struct Airline {
         string name;
@@ -100,12 +102,22 @@ contract FlightSuretyData {
         _;
     }
 
-    modifier checkValue(address sender, uint value) {
+    modifier checkFundValue(address sender, uint value) {
         _;
         uint amountToReturn = value - FUND_PRICE;
         sender.transfer(amountToReturn);
     }
 
+    modifier checkBuyValue(address sender, uint value) {
+        // check that more than 0 Ether was sent
+        require(value > 0, "Ether sent is not enough to buy a surety!"); 
+        _;
+        // return if the passenger paid more than the maximum buy price
+        if (value > MAX_BUY_PRICE) {
+            uint amountToReturn = value - MAX_BUY_PRICE;
+            sender.transfer(amountToReturn);
+        }        
+    }
 
 // endregion
 
@@ -195,7 +207,7 @@ contract FlightSuretyData {
                 requireIsCallerAuthorized()
                 requireIsAirlineNotFunded(sender) 
                 paidEnough(value)        
-                checkValue(sender, value) {
+                checkFundValue(sender, value) {
 
         // set the airline as funded
         airlines[sender].isFunded = true; 
@@ -319,11 +331,12 @@ contract FlightSuretyData {
     * @dev Buy insurance for a flight
     *
     */   
-    function buy
-                            (                             
-                            )
-                            external
-                            payable
+    function buy(address sender, uint value)
+        requireIsCallerAuthorized()
+        requireIsAirlineNotFunded(sender) 
+        checkBuyValue(sender, value)
+        external
+        payable
     {
 
     }
