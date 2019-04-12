@@ -1,6 +1,6 @@
 
-
-
+// This function allows to expose the accounts associated to the correspdonding entities.
+// It is used in the deploy script, the DApp UI and the tests.
 function load(accounts) {
 
     let configuration = {
