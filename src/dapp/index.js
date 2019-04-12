@@ -8,10 +8,10 @@ import './flightsurety.css';
 
     let contract = new Contract('localhost', () => {
 
-        var flights = new Vue({
-            el: '#app-2',
+        new Vue({
+            el: '#flightsList',
             data: {
-              message: 'You loaded this page on ' + new Date().toLocaleString()
+                flights: contract.commonConfig.flights
             }
         })
 

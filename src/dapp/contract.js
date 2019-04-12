@@ -3,22 +3,25 @@ import Config from './config.json';
 import Web3 from 'web3';
 
 export default class Contract {
+
     constructor(network, callback) {
 
-        let config = Config[network];
-        this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
-        this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
+        let configNetwork = Config[network];
+        this.web3 = new Web3(new Web3.providers.HttpProvider(configNetwork.url));
+        this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, configNetwork.appAddress);
         this.commonConfig = Config.commonConfig;
         this.initialize(callback);                
     }
 
     initialize(callback) {
+        
         this.web3.eth.getAccounts((error, accts) => {                      
             callback();
         });
     }
 
     isOperational(callback) {        
+
        let self = this;
     
        self.flightSuretyApp.methods
@@ -27,6 +30,7 @@ export default class Contract {
     }
 
     fetchFlightStatus(flight, callback) {
+
         let self = this;
         let payload = {
             airline: self.commonConfig.airlines[0],
