@@ -1,6 +1,5 @@
-
-import Contract from './contract';
-import './flightsurety.css';
+let Contract = require("./contract.js");
+require("./flightsurety.css");
 
 (async() => {
 

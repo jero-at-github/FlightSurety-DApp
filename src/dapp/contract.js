@@ -1,8 +1,8 @@
-import FlightSuretyApp from '../../build/contracts/FlightSuretyApp.json';
-import Config from './config.json';
-import Web3 from 'web3';
+let FlightSuretyApp = require("../../build/contracts/FlightSuretyApp.json");
+let Config = require("./config.json");
+let Web3 = require("web3"); 
 
-export default class Contract {
+module.exports = class Contract {
 
     constructor(network, callback) {
 
@@ -14,7 +14,7 @@ export default class Contract {
     }
 
     initialize(callback) {
-        
+
         this.web3.eth.getAccounts((error, accts) => {                      
             callback();
         });
