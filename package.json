@@ -12,8 +12,8 @@
     "test-airlines": "truffle.cmd test ./test/airlines.js",
     "test-operational": "truffle.cmd test ./test/operational.js",
     "test-flights": "truffle.cmd test ./test/flights.js",
-    "dapp": "webpack-dev-server --mode development --config webpack.config.dapp.js",
-    "dapp:prod": "webpack --mode production  --config webpack.config.dapp.js",
+    "dapp": "npm run deploy-dev && webpack-dev-server --mode development --config webpack.config.dapp.js",
+    "dapp:prod": "npm run deploy-dev && webpack --mode production  --config webpack.config.dapp.js",
     "server": "rm -rf ./build/server && webpack --config webpack.config.server.js",
     "deploy-dev": "truffle.cmd compile --reset && truffle.cmd deploy --network development --reset"
   },
