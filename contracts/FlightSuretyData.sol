@@ -143,14 +143,13 @@ contract FlightSuretyData {
             sender.transfer(amountToReturn);
         }        
     }
-    /*
-    modifier requireIsSuretyNotBought(bytes32 flightKey, address sender) {
+   
+    modifier requireIsSuretyNotBought(string description, string flightCode, address airline, address sender) {
         
-        bool status = isSuretyAlreadyBought(flightKey, sender);
+        bool status = isSuretyAlreadyBought(description, flightCode, airline, sender);
         require(status == false, "This passenger bought already a surety for this flight!");
         _;
     }
-    */
 
 // endregion
 
@@ -604,12 +603,14 @@ contract FlightSuretyData {
     */   
     function buySurety(string description, string flightCode, address airline, address sender, uint value)
         requireIsCallerAuthorized
-        //requireIsSuretyNotBought(flightKey, sender) 
+        //requireIsSuretyNotBought(description, flightCode, airline, sender) // Error while compiling: Stack too deep 
         checkBuyValue(sender, value)
         external
         payable
     {
-       
+        bool status = isSuretyAlreadyBought(description, flightCode, airline, sender);
+        require(status == false, "This passenger bought already a surety for this flight!");
+
         bytes32 flightKey = keccak256(abi.encodePacked(airline, flightCode, description));
 
         Surety memory surety = Surety({
