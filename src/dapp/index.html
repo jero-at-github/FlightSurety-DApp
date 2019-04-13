@@ -45,13 +45,19 @@
                         <option v-for="passenger in passengers">
                             {{ passenger }}                            
                         </option>
-                    </select>                    
-                    Balance: <span class="field-value" id="balance"></span> Ether
+                    </select> 
+                    <div>                   
+                        Balance: <span class="field-value" id="balance"></span> Ether
+                    </div>
+                    <div>                   
+                        Saldo: <span class="field-value" id="saldo"></span> Ether
+                        <button v-show="!alreadyBought" class="btn btn-primary" id="btnSaldo">Withdraw</button>      
+                    </div>
                 </div>                     
-                <div class="col-1">
+                <div class="col-1" style="margin-top: 20px;">
                     <label class="form">Flights</label>
                 </div>
-                <div class="col-11">                                                       
+                <div class="col-11" style="margin-top: 20px;">                                                       
                     <select id="flightsList"> 
                         <option v-for="(value, key, index) in airlines_flights.flights" v-bind:value="key">   
                                 {{ airlines_flights.airlines[key].name }}                                                                                       
@@ -72,9 +78,7 @@
             <div class="col-12">
                 <h3>Request flight status</h3>
             </div>
-            <div class="col-12">
-                <label class="form">Flights</label> 
-               
+            <div class="col-12">                               
                 <ul id="flightsList2"> 
                     <li v-for="(value, key, index) in airlines_flights.flights" v-bind:value="key" style="margin-top: 25px;">   
                         <button class="btn btn-primary" id="submit-oracle" v-bind:data-index="key">Submit to Oracles</button>    

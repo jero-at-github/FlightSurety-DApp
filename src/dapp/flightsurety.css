@@ -46,3 +46,7 @@ select {
 .section div:nth-child(3) {
     margin-top: 10px;
 }
+
+h3 {
+    color: darkorange;
+}
