@@ -38,32 +38,32 @@ function load(accounts) {
         ],    
         "flights": [
             {
-                "description": "Frankfurt - Bangkok",
+                "description": "Frankfurt-Bangkok",
                 "flightCode": "FRA123",
                 "airline": null 
             },
             {
-                "description": "New York - Miami",
+                "description": "New York-Miami",
                 "flightCode": "AA783",
                 "airline": null
             },
             {
-                "description": "New York - Sao Paulo",
+                "description": "New York-Sao Paulo",
                 "flightCode": "AA933",
                 "airline": null
             },
             {
-                "description": "Madrid - Malaga",
+                "description": "Madrid-Malaga",
                 "flightCode": "MA839",
                 "airline": null
             },
             {
-                "description": "Dublin - London",
+                "description": "Dublin-London",
                 "flightCode": "DU930",
                 "airline": null
             },        
             {
-                "description": "Montreal - Seattle",
+                "description": "Montreal-Seattle",
                 "flightCode": "CA115",
                 "airline": null
             }
