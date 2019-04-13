@@ -5,11 +5,12 @@ body {
 }
 
 .container {
-    margin-top: 400px;
+    margin-top: 200px;
     background-color: #000;
     opacity: 0.9;
     color: #fff;
-    padding: 40px;
+    padding-top: 40px;
+    padding-bottom: 40px;
 }
 
 .top-20 {
@@ -34,26 +35,14 @@ section {
 }
 
 label.form {
-    font-size: 14px;
-    margin-right: 20px;
+    font-size: 14px;    
 }
-
-/*
-input, select {
-    margin-right: 15px;
-}
-*/
 
 select {
     height: 30px;
 }
 
-btn {
-    margin-left: 15px;
-}
-
 .section div:nth-child(2),
 .section div:nth-child(3) {
     margin-top: 10px;
-    margin-left: 10px;    
 }
