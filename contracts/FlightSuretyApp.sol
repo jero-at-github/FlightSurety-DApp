@@ -238,8 +238,8 @@ contract FlightSuretyApp {
         return flightSuretyData.isSuretyAlreadyBought(description, flightCode, airline, msg.sender);
     }
 
-    function getPassengerSaldo(address passenger) public view returns (uint) {
-        return flightSuretyData.getPassengerSaldo(passenger);
+    function getPassengerSaldo() public view returns (uint) {
+        return flightSuretyData.getPassengerSaldo(msg.sender);
     }
 
 // endregion

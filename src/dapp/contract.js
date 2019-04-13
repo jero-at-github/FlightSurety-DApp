@@ -24,8 +24,7 @@ module.exports = class Contract {
 
     isOperational(callback) {        
 
-       let self = this;
-    
+       let self = this;    
        self.flightSuretyApp.methods
             .isOperational()
             .call({ from: self.commonConfig.owner}, callback);
@@ -53,6 +52,19 @@ module.exports = class Contract {
             // convert from wei to ether
             let balance = self.web3.utils.fromWei(response, "ether");
             callback(balance);
+        });
+    }   
+
+    getPassengerSaldo(address, callback) { 
+
+        let self = this;     
+        self.flightSuretyApp.methods
+            .getPassengerSaldo()
+            .call({ from: address}, (error, response) => {
+
+            // convert from wei to ether
+            let saldo = self.web3.utils.fromWei(response, "ether");
+            callback(saldo);
         });
     }   
 

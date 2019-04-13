@@ -64,12 +64,20 @@ require("./flightsurety.css");
         function refreshInfo() {
             showBalance(); 
             showBuyButton();
+            showSaldo();
         }
 
         function showBalance() {
                                     
             contract.getBalance(selectedPassanger, (response) => {                
                 document.querySelector("#balance").textContent = response;
+            });
+        }
+
+        function showSaldo() {
+                                    
+            contract.getPassengerSaldo(selectedPassanger, (response) => {                
+                document.querySelector("#saldo").textContent = response;
             });
         }
 
