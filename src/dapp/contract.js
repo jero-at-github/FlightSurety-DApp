@@ -68,14 +68,19 @@ module.exports = class Contract {
         
         let self = this;    
         let flight = self.commonConfig.flights[flightIndex];                   
-debugger;
+
         value = self.web3.utils.toWei(value, "ether");       
 
         return self.flightSuretyApp.methods
             .buySurety(flight.description, flight.flightCode, flight.airline)
-            .send({ from: address, value: value}, (error, response) => {
-                console.log("response" + response);
-                console.log("error" + error);
+            .send({ 
+                from: address, 
+                value: value, 
+                gas: 4712388,
+                gasPrice: 100000000000}, 
+                (error, response) => {
+                    if (error) alert(error);
+                    console.log(response);
             });       
     }
 

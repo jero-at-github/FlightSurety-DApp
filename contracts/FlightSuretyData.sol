@@ -98,7 +98,7 @@ contract FlightSuretyData {
         _;
     }
 
-    modifier requireIsCallerAuthorized()
+    modifier requireIsCallerAuthorized
     {
         require(authorizedContracts[msg.sender] == 1, "Caller is not contract owner");
         _;
@@ -247,7 +247,7 @@ contract FlightSuretyData {
     * Get the number of registered airlines.
     */
     function getNumRegAirlines() external view
-                requireIsCallerAuthorized()
+                requireIsCallerAuthorized
                 returns(uint256)
     {
         return numRegAirlines;
@@ -257,7 +257,7 @@ contract FlightSuretyData {
     * First airline registration hapenning when the contract is deployed.
     */
     function fundAirline(address sender, uint value) external payable
-                requireIsCallerAuthorized()
+                requireIsCallerAuthorized
                 requireIsAirlineNotFunded(sender) 
                 paidEnough(value)        
                 checkFundValue(sender, value) {
@@ -273,7 +273,7 @@ contract FlightSuretyData {
     *
     */   
     function registerAirline(address airlineAddress, string name, address sender) external 
-                requireIsCallerAuthorized()         
+                requireIsCallerAuthorized        
                 requireIsAirlineNotRegistered(airlineAddress)
                 requireIsSenderFundedAirline(sender)                       
                 returns(bool success, uint256 votes)
@@ -358,7 +358,7 @@ contract FlightSuretyData {
     * Checks if a certain airline exists.
     */
     function isAirline(address airlineAddress) public view 
-                requireIsCallerAuthorized()                
+                requireIsCallerAuthorized                
                 returns(bool) {       
         
         return airlines[airlineAddress].isCreated;
@@ -368,7 +368,7 @@ contract FlightSuretyData {
     * Gets and airline.
     */
     function getAirline(address airlineAddress) public view 
-                requireIsCallerAuthorized()                
+                requireIsCallerAuthorized                
                 returns(string name, bool isCreated, bool isRegistered, bool isFunded) 
     {       
         
@@ -603,7 +603,7 @@ contract FlightSuretyData {
     *
     */   
     function buySurety(string description, string flightCode, address airline, address sender, uint value)
-        requireIsCallerAuthorized()
+        requireIsCallerAuthorized
         //requireIsSuretyNotBought(flightKey, sender) 
         //checkBuyValue(sender, value)
         external
