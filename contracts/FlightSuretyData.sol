@@ -30,8 +30,10 @@ contract FlightSuretyData {
 
     struct Surety {
         address passenger;
-        uint pricePaid;
+        uint pricePaid;               
     }
+
+    mapping(address => uint) private saldo;                      // mapping to store the relation passengers-saldo
 
     struct Airline {
         string name;
