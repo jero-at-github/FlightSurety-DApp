@@ -17,7 +17,7 @@ contract FlightSuretyApp {
     uint private FUND_PRICE = 10 ether;   
     uint private MAX_BUY_PRICE = 1 ether;  
 
-    using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
+    using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)    
 
     /********************************************************************************************/
     /*                                       DATA VARIABLES                                     */
@@ -124,7 +124,7 @@ contract FlightSuretyApp {
 
      modifier checkFundValue(address sender, uint value) {
         _;
-        uint amountToReturn = value - FUND_PRICE;
+        uint amountToReturn = value.sub(FUND_PRICE);
         sender.transfer(amountToReturn);
     }
 
@@ -134,7 +134,7 @@ contract FlightSuretyApp {
         _;
         // return if the passenger paid more than the maximum buy price
         if (value > MAX_BUY_PRICE) {
-            uint amountToReturn = value - MAX_BUY_PRICE;
+            uint amountToReturn = value.sub(MAX_BUY_PRICE);
             sender.transfer(amountToReturn);
         }        
     }
