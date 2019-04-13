@@ -6,9 +6,11 @@ module.exports = class Contract {
 
     constructor(network, callback) {
 
+        this.defaultGas = 100000;
         let configNetwork = Config[network];
         this.web3 = new Web3(new Web3.providers.HttpProvider(configNetwork.url));
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, configNetwork.appAddress);
+        
         this.commonConfig = Config.commonConfig;
         this.initialize(callback);                
     }
@@ -70,20 +72,19 @@ module.exports = class Contract {
         let flight = self.commonConfig.flights[flightIndex];                   
 
         value = self.web3.utils.toWei(value, "ether");       
-
+                       
         return self.flightSuretyApp.methods
             .buySurety(flight.description, flight.flightCode, flight.airline)
             .send({ 
                 from: address, 
-                value: value, 
-                gas: 4712388,
-                gasPrice: 100000000000}, 
+                value: value,
+                gas: this.defaultGas}, 
                 (error, response) => {
                     if (error) alert(error);
                     console.log(response);
 
                     callback();
-            });       
+            });                   
     }
 
 }
