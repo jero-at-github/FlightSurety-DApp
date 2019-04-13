@@ -72,8 +72,7 @@ require("./flightsurety.css");
                 vueShowBuy.alreadyBought = result;
             });                    
         }
-
-        /*
+      
         function buySurety() {
 
             let value =  document.querySelector("#suretyValue").value;
@@ -81,7 +80,6 @@ require("./flightsurety.css");
             
             contract.buySurety(flightIndex, selectedPassanger, value);
         }
-        */
 
         // init listeners
         document.querySelector("#passengersList").addEventListener("change", () => {    
@@ -100,7 +98,7 @@ require("./flightsurety.css");
 
         document.querySelector("#btnBuySurety").addEventListener("click", () => {      
 
-            //buySurety();
+            buySurety();
         });
 
         showBalance(); 

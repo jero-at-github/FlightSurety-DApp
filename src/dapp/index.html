@@ -61,7 +61,7 @@
                     </select>       
                     <span id="showBuyButton">                                     
                         <input v-if="!alreadyBought" type="number" id="suretyValue" style="width: 50px;" value="0.1" min="0.1" max="1" step="0.1"> Ether
-                        <btn v-if="!alreadyBought" class="btn btn-primary" id="btnBuySurety">Purchase surety</btn>                                        
+                        <button v-if="!alreadyBought" class="btn btn-primary" id="btnBuySurety">Purchase surety</button>                                        
                         <span v-else style="color: #FF0000;">This passenger bought already a surity for this flight.</span>
                     </span>
                 </div>                     
@@ -82,7 +82,7 @@
                     </option>
                 </select>          
                 -->
-                <btn class="btn btn-primary" id="submit-oracle">Submit to Oracles</btn>
+                <button class="btn btn-primary" id="submit-oracle">Submit to Oracles</button>
             </div>          
         </div>
     </main>
