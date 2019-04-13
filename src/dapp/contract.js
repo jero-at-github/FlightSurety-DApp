@@ -6,7 +6,7 @@ module.exports = class Contract {
 
     constructor(network, callback) {
 
-        this.defaultGas = 100000;
+        this.defaultGas = 300000;
         let configNetwork = Config[network];
         this.web3 = new Web3(new Web3.providers.HttpProvider(configNetwork.url));
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, configNetwork.appAddress);

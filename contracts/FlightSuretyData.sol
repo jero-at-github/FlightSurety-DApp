@@ -23,9 +23,7 @@ contract FlightSuretyData {
     bool private operational = true;                            // Blocks all state changes throughout the contract if false    
     uint8 private IART = 4;                                     // (I)nitial (A)riline (R)egistration (T)hreshold
     uint256 private  numRegAirlines = 0;                        // Number of registered airlines
-    uint256 private  numFundedAirlines = 0;                     // Number of funded airlines
-    uint private FUND_PRICE = 10 ether;
-    uint private MAX_BUY_PRICE = 1 ether;    
+    uint256 private  numFundedAirlines = 0;                     // Number of funded airlines     
 
     mapping(address => address[]) private registrationVotes;    // mapping to store the multiparty airline registration votes    
     mapping(bytes32 => Surety[]) private sureties;              // mapping to store the relation flight-passengers
@@ -120,29 +118,7 @@ contract FlightSuretyData {
     {
         require(airlines[airlineAddress].isFunded == false, "The airline was already funded!");
         _;
-    }    
-     
-    modifier paidEnough(uint value) { 
-        require(value >= FUND_PRICE, "Ether sent is not enough to fund an airline!"); 
-        _;
-    }
-
-    modifier checkFundValue(address sender, uint value) {
-        _;
-        uint amountToReturn = value - FUND_PRICE;
-        sender.transfer(amountToReturn);
-    }
-
-    modifier checkBuyValue(address sender, uint value) {
-        // check that more than 0 Ether was sent
-        require(value > 0, "Ether sent is not enough to buy a surety!"); 
-        _;
-        // return if the passenger paid more than the maximum buy price
-        if (value > MAX_BUY_PRICE) {
-            uint amountToReturn = value - MAX_BUY_PRICE;
-            sender.transfer(amountToReturn);
-        }        
-    }
+    }               
    
     modifier requireIsSuretyNotBought(string description, string flightCode, address airline, address sender) {
         
@@ -257,9 +233,7 @@ contract FlightSuretyData {
     */
     function fundAirline(address sender, uint value) external payable
                 requireIsCallerAuthorized
-                requireIsAirlineNotFunded(sender) 
-                paidEnough(value)        
-                checkFundValue(sender, value) {
+                requireIsAirlineNotFunded(sender) {
 
         // set the airline as funded
         airlines[sender].isFunded = true; 
@@ -603,8 +577,7 @@ contract FlightSuretyData {
     */   
     function buySurety(string description, string flightCode, address airline, address sender, uint value)
         requireIsCallerAuthorized
-        //requireIsSuretyNotBought(description, flightCode, airline, sender) // Error while compiling: Stack too deep 
-        checkBuyValue(sender, value)
+        //requireIsSuretyNotBought(description, flightCode, airline, sender) // Error while compiling: Stack too deep         
         external
         payable
     {

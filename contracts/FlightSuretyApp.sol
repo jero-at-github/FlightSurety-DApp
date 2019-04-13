@@ -14,6 +14,9 @@ contract FlightSuretyApp {
     bool private operational = true;            
     FlightSuretyData flightSuretyData;
 
+    uint private FUND_PRICE = 10 ether;   
+    uint private MAX_BUY_PRICE = 1 ether;  
+
     using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)
 
     /********************************************************************************************/
@@ -106,6 +109,36 @@ contract FlightSuretyApp {
         operational = mode;           
     }
 
+// endregion   
+
+// region function modifiers
+
+    /********************************************************************************************/
+    /*                                       FUNCTION MODIFIERS                                 */
+    /********************************************************************************************/
+
+    modifier paidEnough(uint value) { 
+        require(value >= FUND_PRICE, "Ether sent is not enough to fund an airline!"); 
+        _;
+    }
+
+     modifier checkFundValue(address sender, uint value) {
+        _;
+        uint amountToReturn = value - FUND_PRICE;
+        sender.transfer(amountToReturn);
+    }
+
+    modifier checkBuyValue(address sender, uint value) {
+        // check that more than 0 Ether was sent
+        require(value > 0, "Ether sent is not enough to buy a surety!"); 
+        _;
+        // return if the passenger paid more than the maximum buy price
+        if (value > MAX_BUY_PRICE) {
+            uint amountToReturn = value - MAX_BUY_PRICE;
+            sender.transfer(amountToReturn);
+        }        
+    }
+
 // endregion
 
     /********************************************************************************************/
@@ -124,7 +157,10 @@ contract FlightSuretyApp {
    /**
     * First airline registration hapenning when the contract is deployed.
     */
-    function fundAirline() external payable               
+    function fundAirline() 
+        paidEnough(msg.value)  
+        checkFundValue(msg.sender, msg.value)      
+        external payable               
     {
        flightSuretyData.fundAirline(msg.sender, msg.value);
     }
@@ -189,7 +225,8 @@ contract FlightSuretyApp {
     * @dev Buy insurance for a flight
     *
     */   
-    function buySurety(string description, string flightCode, address airline)      
+    function buySurety(string description, string flightCode, address airline)     
+        checkBuyValue(msg.sender, msg.value)
         external
         payable
     {
