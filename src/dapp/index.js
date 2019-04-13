@@ -58,6 +58,11 @@ require("./flightsurety.css");
         })
         */
 
+        function refreshInfo() {
+            showBalance(); 
+            showBuyButton();
+        }
+
         function showBalance() {
                                     
             contract.getBalance(selectedPassanger, (response) => {                
@@ -78,31 +83,37 @@ require("./flightsurety.css");
             let value =  document.querySelector("#suretyValue").value;
             value = value.replace(",", ".");
             
-            contract.buySurety(flightIndex, selectedPassanger, value);
-        }
+            contract.buySurety(flightIndex, selectedPassanger, value, () => {
+                refreshInfo();
+            });            
+        }       
 
-        // init listeners
-        document.querySelector("#passengersList").addEventListener("change", () => {    
-            
-            selectedPassanger = document.querySelector("#passengersList").value;       
-            showBalance();
-        });
-        selectedPassanger = document.querySelector("#passengersList").value;      
+        function initListeners() {
 
-        document.querySelector("#flightsList").addEventListener("change", () => {   
+             // init listeners
+            document.querySelector("#passengersList").addEventListener("change", () => {    
+                
+                selectedPassanger = document.querySelector("#passengersList").value;       
+                showBalance();
+            });
+            selectedPassanger = document.querySelector("#passengersList").value;      
 
+            document.querySelector("#flightsList").addEventListener("change", () => {   
+
+                flightIndex = document.querySelector("#flightsList").value;
+                showBuyButton();
+            });
             flightIndex = document.querySelector("#flightsList").value;
-            showBuyButton();
-        });
-        flightIndex = document.querySelector("#flightsList").value;
 
-        document.querySelector("#btnBuySurety").addEventListener("click", () => {      
+            document.querySelector("#btnBuySurety").addEventListener("click", () => {      
 
-            buySurety();
-        });
+                buySurety();
+            });
 
-        showBalance(); 
-        showBuyButton();
+            refreshInfo();
+        }
+  
+        initListeners();       
     });            
 
 })();

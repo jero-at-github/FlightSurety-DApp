@@ -64,7 +64,7 @@ module.exports = class Contract {
             .call({ from: address}, callback);       
     }
 
-    buySurety(flightIndex, address, value) {
+    buySurety(flightIndex, address, value, callback) {
         
         let self = this;    
         let flight = self.commonConfig.flights[flightIndex];                   
@@ -81,6 +81,8 @@ module.exports = class Contract {
                 (error, response) => {
                     if (error) alert(error);
                     console.log(response);
+
+                    callback();
             });       
     }
 

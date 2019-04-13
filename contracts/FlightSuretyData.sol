@@ -605,7 +605,7 @@ contract FlightSuretyData {
     function buySurety(string description, string flightCode, address airline, address sender, uint value)
         requireIsCallerAuthorized
         //requireIsSuretyNotBought(flightKey, sender) 
-        //checkBuyValue(sender, value)
+        checkBuyValue(sender, value)
         external
         payable
     {
