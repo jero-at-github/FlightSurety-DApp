@@ -33,7 +33,7 @@ contract FlightSuretyData {
         uint pricePaid;               
     }
 
-    mapping(address => uint) private saldo;                      // mapping to store the relation passengers-saldo
+    mapping(address => uint) public saldo;                      // mapping to store the relation passengers-saldo
 
     struct Airline {
         string name;
@@ -42,7 +42,7 @@ contract FlightSuretyData {
         bool isFunded;        
     }
 
-    mapping(address => Airline) airlines;                                // Mapping for storing airlines
+    mapping(address => Airline) airlines;                         // Mapping for storing airlines
 
     struct Flight {       
         string description;
@@ -377,6 +377,10 @@ contract FlightSuretyData {
                         statusCode: STATUS_CODE_UNKNOWN,
                         updatedTimestamp: updatedTimestamp,
                         airline: airline});             
+    }
+
+    function getPassengerSaldo(address passenger) public view returns (uint) {
+        return saldo[passenger];
     }
 
     /**

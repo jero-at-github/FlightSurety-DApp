@@ -238,6 +238,10 @@ contract FlightSuretyApp {
         return flightSuretyData.isSuretyAlreadyBought(description, flightCode, airline, msg.sender);
     }
 
+    function getPassengerSaldo(address passenger) public view returns (uint) {
+        return flightSuretyData.getPassengerSaldo(passenger);
+    }
+
 // endregion
 
 }   
@@ -253,4 +257,5 @@ contract FlightSuretyData {
     function registerFlight(string description, string flightCode, uint256 updatedTimestamp, address airline) external;
     function buySurety(string description, string flightCode, address airline, address sender, uint value) external payable;
     function isSuretyAlreadyBought(string description, string flightCode, address airline, address sender) public view returns (bool);
+    function getPassengerSaldo(address passenger) public view returns (uint);
 }
