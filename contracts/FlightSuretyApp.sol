@@ -189,16 +189,16 @@ contract FlightSuretyApp {
     * @dev Buy insurance for a flight
     *
     */   
-    function buy(bytes32 flightKey)      
+    function buySurety(string description, string flightCode, address airline)      
         external
         payable
     {
-        flightSuretyData.buy(flightKey, msg.sender, msg.value);            
+        flightSuretyData.buySurety(description, flightCode, airline, msg.sender, msg.value);            
     }
 
-    function isSuretyAlreadyBought(bytes32 flightKey) public view returns (bool)
-    {       
-        return flightSuretyData.isSuretyAlreadyBought(flightKey, msg.sender);
+    function isSuretyAlreadyBought(string description, string flightCode, address airline) public view returns (bool)
+    {               
+        return flightSuretyData.isSuretyAlreadyBought(description, flightCode, airline, msg.sender);
     }
 
 // endregion
@@ -214,6 +214,6 @@ contract FlightSuretyData {
     function getAirline(address airlineAddress) public view returns(string name, bool isCreated, bool isRegistered, bool isFunded);                                
     function getNumRegAirlines() external view returns(uint256);
     function registerFlight(string description, string flightCode, uint256 updatedTimestamp, address airline) external;
-    function buy(bytes32 flightKey, address sender, uint value)  external payable;
-    function isSuretyAlreadyBought(bytes32 flightKey, address sender) public view returns (bool);
+    function buySurety(string description, string flightCode, address airline, address sender, uint value) external payable;
+    function isSuretyAlreadyBought(string description, string flightCode, address airline, address sender) public view returns (bool);
 }

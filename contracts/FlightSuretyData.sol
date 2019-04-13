@@ -143,13 +143,14 @@ contract FlightSuretyData {
             sender.transfer(amountToReturn);
         }        
     }
-
+    /*
     modifier requireIsSuretyNotBought(bytes32 flightKey, address sender) {
         
         bool status = isSuretyAlreadyBought(flightKey, sender);
         require(status == false, "This passenger bought already a surety for this flight!");
         _;
     }
+    */
 
 // endregion
 
@@ -222,9 +223,12 @@ contract FlightSuretyData {
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
 
-    function isSuretyAlreadyBought(bytes32 flightKey, address sender) public view returns (bool)
-    {
+    function isSuretyAlreadyBought(string description, string flightCode, address airline, address sender) public view returns (bool)
+    {                
         bool result = false;
+
+        // generate key     
+        bytes32 flightKey = keccak256(abi.encodePacked(airline, flightCode, description));
 
         Surety[] memory _sureties = sureties[flightKey];
         
@@ -236,7 +240,7 @@ contract FlightSuretyData {
             }
         }        
 
-        return result;
+        return result;     
     }
 
    /**
@@ -598,13 +602,15 @@ contract FlightSuretyData {
     * @dev Buy insurance for a flight
     *
     */   
-    function buy(bytes32 flightKey, address sender, uint value)
+    function buySurety(string description, string flightCode, address airline, address sender, uint value)
         requireIsCallerAuthorized()
-        requireIsSuretyNotBought(flightKey, sender) 
+        //requireIsSuretyNotBought(flightKey, sender) 
         checkBuyValue(sender, value)
         external
         payable
     {
+        bytes32 flightKey = keccak256(abi.encodePacked(airline, flightCode, description));
+
         Surety memory surety = Surety({
             passenger: sender,
             pricePaid: value

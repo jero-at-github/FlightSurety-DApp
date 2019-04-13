@@ -43,4 +43,34 @@ module.exports = class Contract {
                 callback(error, payload);
             });
     }
+
+    getBalance(address, callback) {   
+        let self = this;     
+        self.web3.eth.getBalance(address).then( (response) => {
+
+            // convert from wei to ether
+            let balance = self.web3.utils.fromWei(response, "ether");
+            callback(balance);
+        });
+    }   
+
+    isSuretyAlreadyBought(flightIndex, address, callback) {        
+         
+        let self = this;    
+        let flight = self.commonConfig.flights[flightIndex];      
+
+        return self.flightSuretyApp.methods
+            .isSuretyAlreadyBought(flight.description, flight.flightCode, flight.airline)
+            .call({ from: address}, callback);       
+    }
+/*
+    buySurety(flightIndex, address, value) {
+        let self = this;    
+        let flight = self.commonConfig.flights[flightIndex];      
+debugger;
+        return self.flightSuretyApp.methods
+            .buySurety(flight.description, flight.flightCode, flight.airline)
+            .send({ from: address, value: value}, callback);       
+    }
+    */
 }
