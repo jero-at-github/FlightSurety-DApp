@@ -37,7 +37,10 @@ require("./flightsurety.css");
         new Vue({
             el: '#flightsList2',
             data: {
-                flights: contract.commonConfig.flights
+                airlines_flights: {
+                    airlines: contract.commonConfig.airlines,
+                    flights: contract.commonConfig.flights
+                }
             }
         })
 

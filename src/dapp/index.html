@@ -73,16 +73,16 @@
                 <h3>Request flight status</h3>
             </div>
             <div class="col-12">
-                <label class="form">Flight</label> 
-                <!--
-                <select id="flightsList2"> 
-                    <option v-for="flight in airlines_flights.flights">                       
-                        {{ flight.flightCode }}
-                        {{ flight.description }}                           
-                    </option>
-                </select>          
-                -->
-                <button class="btn btn-primary" id="submit-oracle">Submit to Oracles</button>
+                <label class="form">Flights</label> 
+               
+                <ul id="flightsList2"> 
+                    <li v-for="(value, key, index) in airlines_flights.flights" v-bind:value="key" style="margin-top: 25px;">   
+                        <button class="btn btn-primary" id="submit-oracle" v-bind:data-index="key">Submit to Oracles</button>    
+                        {{ airlines_flights.airlines[key].name }}                                                                                       
+                        {{ value.flightCode }}  
+                        {{ value.description }}                              
+                    </li>                    
+                </ul>                                         
             </div>          
         </div>
     </main>
