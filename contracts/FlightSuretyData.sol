@@ -611,16 +611,13 @@ contract FlightSuretyData {
     {
        
         bytes32 flightKey = keccak256(abi.encodePacked(airline, flightCode, description));
-/*
-        Surety storage surety = Surety({
+
+        Surety memory surety = Surety({
             passenger: sender,
             pricePaid: value
         });
-*/
-        sureties[flightKey].push(Surety({
-            passenger: sender,
-            pricePaid: value
-        })); 
+
+        sureties[flightKey].push(surety); 
     }
 
     /**
