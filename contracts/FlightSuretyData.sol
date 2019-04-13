@@ -28,7 +28,7 @@ contract FlightSuretyData {
     uint private MAX_BUY_PRICE = 1 ether;    
 
     mapping(address => address[]) private registrationVotes;    // mapping to store the multiparty airline registration votes    
-    mapping(bytes32 => Surety[]) public sureties;                 // mapping to store the relation flight-passengers
+    mapping(bytes32 => Surety[]) private sureties;              // mapping to store the relation flight-passengers
 
     struct Surety {
         address passenger;
@@ -605,18 +605,22 @@ contract FlightSuretyData {
     function buySurety(string description, string flightCode, address airline, address sender, uint value)
         requireIsCallerAuthorized()
         //requireIsSuretyNotBought(flightKey, sender) 
-        checkBuyValue(sender, value)
+        //checkBuyValue(sender, value)
         external
         payable
     {
+       
         bytes32 flightKey = keccak256(abi.encodePacked(airline, flightCode, description));
-
-        Surety memory surety = Surety({
+/*
+        Surety storage surety = Surety({
             passenger: sender,
             pricePaid: value
         });
-
-        sureties[flightKey].push(surety); 
+*/
+        sureties[flightKey].push(Surety({
+            passenger: sender,
+            pricePaid: value
+        })); 
     }
 
     /**

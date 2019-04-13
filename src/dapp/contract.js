@@ -63,14 +63,20 @@ module.exports = class Contract {
             .isSuretyAlreadyBought(flight.description, flight.flightCode, flight.airline)
             .call({ from: address}, callback);       
     }
-/*
+
     buySurety(flightIndex, address, value) {
+        
         let self = this;    
-        let flight = self.commonConfig.flights[flightIndex];      
+        let flight = self.commonConfig.flights[flightIndex];                   
 debugger;
+        value = self.web3.utils.toWei(value, "ether");       
+
         return self.flightSuretyApp.methods
             .buySurety(flight.description, flight.flightCode, flight.airline)
-            .send({ from: address, value: value}, callback);       
+            .send({ from: address, value: value}, (error, response) => {
+                console.log("response" + response);
+                console.log("error" + error);
+            });       
     }
-    */
+
 }
