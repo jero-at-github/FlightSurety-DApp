@@ -72,8 +72,7 @@ require("./flightsurety.css");
 
         function showBuyButton(flight) {
                        
-            contract.isSuretyAlreadyBought(flightIndex, selectedPassanger, (error, result) => {                
-                console.log(result);
+            contract.isSuretyAlreadyBought(flightIndex, selectedPassanger, (error, result) => {                                
                 vueShowBuy.alreadyBought = result;
             });                    
         }
@@ -94,14 +93,14 @@ require("./flightsurety.css");
             document.querySelector("#passengersList").addEventListener("change", () => {    
                 
                 selectedPassanger = document.querySelector("#passengersList").value;       
-                showBalance();
+                refreshInfo();
             });
             selectedPassanger = document.querySelector("#passengersList").value;      
 
             document.querySelector("#flightsList").addEventListener("change", () => {   
 
                 flightIndex = document.querySelector("#flightsList").value;
-                showBuyButton();
+                refreshInfo();
             });
             flightIndex = document.querySelector("#flightsList").value;
 
