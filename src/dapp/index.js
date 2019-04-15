@@ -64,7 +64,7 @@ require("./flightsurety.css");
         function refreshInfo() {
             showBalance(); 
             showBuyButton();
-            showSaldo();
+            showFunds();
         }
 
         function showBalance() {
@@ -74,10 +74,10 @@ require("./flightsurety.css");
             });
         }
 
-        function showSaldo() {
+        function showFunds() {
                                     
-            contract.getPassengerSaldo(selectedPassanger, (response) => {                
-                document.querySelector("#saldo").textContent = response;
+            contract.getPassengerFunds(selectedPassanger, (response) => {                
+                document.querySelector("#funds").textContent = response;
             });
         }
 

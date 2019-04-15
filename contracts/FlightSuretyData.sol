@@ -33,7 +33,7 @@ contract FlightSuretyData {
         uint pricePaid;               
     }
 
-    mapping(address => uint) public saldo;                      // mapping to store the relation passengers-saldo
+    mapping(address => uint) private funds;                      // mapping to store the relation passengers-funds
 
     struct Airline {
         string name;
@@ -379,8 +379,8 @@ contract FlightSuretyData {
                         airline: airline});             
     }
 
-    function getPassengerSaldo(address passenger) public view returns (uint) {
-        return saldo[passenger];
+    function getPassengerFunds(address passenger) public view returns (uint) {
+        return funds[passenger];
     }
 
     /**
@@ -604,11 +604,10 @@ contract FlightSuretyData {
      *  @dev Credits payouts to insurees
     */
     function creditInsurees
-                                (
-                                )
-                                external
-                                pure
+            (address passenger, uint fund) 
+            external        
     {
+        funds[passenger] = funds[passenger].add(fund);
     }
     
 
@@ -617,11 +616,11 @@ contract FlightSuretyData {
      *
     */
     function pay
-                            (
-                            )
-                            external
-                            pure
+            (uint amount, address passenger)
+            external
+            payable
     {
+        //require()
     }
 
    /**

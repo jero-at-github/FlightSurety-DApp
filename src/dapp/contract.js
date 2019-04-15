@@ -55,16 +55,16 @@ module.exports = class Contract {
         });
     }   
 
-    getPassengerSaldo(address, callback) { 
+    getPassengerFunds(address, callback) { 
 
         let self = this;     
         self.flightSuretyApp.methods
-            .getPassengerSaldo()
+            .getPassengerFunds()
             .call({ from: address}, (error, response) => {
 
             // convert from wei to ether
-            let saldo = self.web3.utils.fromWei(response, "ether");
-            callback(saldo);
+            let funds = self.web3.utils.fromWei(response, "ether");
+            callback(funds);
         });
     }   
 
