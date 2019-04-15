@@ -12,10 +12,9 @@ module.exports = class Contract {
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, configNetwork.appAddress);
         this.contractAddress = this.flightSuretyApp._address;
         this.commonConfig = Config.commonConfig;        
-
+      
         this.initialize(callback);                        
     }
-
     initialize(callback) {
 
         this.web3.eth.getAccounts((error, accts) => {                      
@@ -46,37 +45,51 @@ module.exports = class Contract {
             });
     }
 
-    registerAirlines(callback) {
+    async registerAirline(index) {
 
         let self = this;   
 
-        // register 4 first airlines        
-        for (let index = 0; index <= 5; index ++) {
-            
+        return new Promise(function(resolve, reject) {            
+
             let fundAirlineValue = self.web3.utils.toWei("10", "ether");
             let firstAirline = self.commonConfig.airlines[0];
             let airline = self.commonConfig.airlines[index];
-
+    
             // register airline
             self.flightSuretyApp.methods
-                .registerAirline(airline.address, airline.name)
-                    .send({ from: firstAirline.address, gas: this.defaultGas }, (error, response) => {                                                                     
-                    
-                    if (!error) {                                                 
+            .registerAirline(airline.address, airline.name)
+                .send({ from: firstAirline.address, gas: this.defaultGas }, (error, response) => {                                                                     
+                
+                if (!error) {                                                 
+    
+                    // fund airline
+                    self.flightSuretyApp.methods
+                        .fundAirline()
+                        .send({ from: airline.address, value: fundAirlineValue, gas: this.defaultGas }, (error, response) => {            
+                            if (error) {
+                                reject(error);
+                            }   
+                            else {
+                                resolve();
+                            }    
+                        });  
+                }
+                else {
+                    reject(error);
+                }
+            });  
+        });        
+    }
 
-                        // fund airline
-                        self.flightSuretyApp.methods
-                            .fundAirline()
-                            .send({ from: airline.address, value: fundAirlineValue, gas: this.defaultGas }, (error, response) => {            
-                                if (error) {
-                                    alert(error);
-                                }       
-                            });  
-                    }
-                    else {
-                        console.log(error);
-                    }
-                });  
+    async registerAirlines(callback) {
+
+        let self = this;   
+
+        // register 3 airlines (plus the default registered one)
+        let iterator = [1,2,3];     
+        for (index of iterator) {
+            
+            await self.registerAirline(index);
         }   
         
         callback();

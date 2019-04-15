@@ -117,9 +117,9 @@ require("./flightsurety.css");
             });            
         }       
 
-        function registerAirlines() {
+        async function registerAirlines() {
             
-            contract.registerAirlines(()=> {                    
+            await contract.registerAirlines(()=> {                    
                                               
                 setTimeout( () => {
                     showContractBalance();
@@ -151,9 +151,9 @@ require("./flightsurety.css");
                 buySurety();
             });
 
-            document.querySelector("#btnRegisterAirlines").addEventListener("click", () => {      
+            document.querySelector("#btnRegisterAirlines").addEventListener("click", async () => {      
 
-                registerAirlines();
+                await registerAirlines();
             });            
 
             refreshInfo();
