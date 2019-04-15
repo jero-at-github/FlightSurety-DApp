@@ -118,7 +118,7 @@ contract FlightSuretyData {
 
     modifier requireIsAirlineNotFunded(address airlineAddress)
     {
-        require(airlines[airlineAddress].isFunded == false, "The airline was already funded!");
+        require(airlines[airlineAddress].isCreated == true && airlines[airlineAddress].isFunded == false, "The airline was already funded!");
         _;
     }               
    
