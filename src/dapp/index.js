@@ -69,6 +69,7 @@ require("./flightsurety.css");
             showBuyButton();
             showFunds();
             showContractBalance();
+            showRegisteredAirlines();
         }
 
         function showContractBalance() {
@@ -98,7 +99,14 @@ require("./flightsurety.css");
                 vueShowBuy.alreadyBought = result;
             });                    
         }
-      
+
+        function showRegisteredAirlines(flight) {
+             
+            contract.getNumRegAirlines((response) => {                
+                document.querySelector("#numRegisteredAirlines").textContent = response;
+            });                 
+        }      
+
         function buySurety() {
 
             let value =  document.querySelector("#suretyValue").value;
@@ -112,10 +120,11 @@ require("./flightsurety.css");
         function registerAirlines() {
             
             contract.registerAirlines(()=> {                    
-                document.querySelector("#numRegisteredAirlines").textContent = "4";   
-                               
+                                              
                 setTimeout( () => {
                     showContractBalance();
+                    showRegisteredAirlines();
+
                 }, 2000);                           
             });    
         }
@@ -141,7 +150,7 @@ require("./flightsurety.css");
 
                 buySurety();
             });
-            
+
             document.querySelector("#btnRegisterAirlines").addEventListener("click", () => {      
 
                 registerAirlines();

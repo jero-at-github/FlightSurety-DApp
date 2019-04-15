@@ -50,10 +50,10 @@ module.exports = class Contract {
 
         let self = this;   
 
-        // register 4 first airlines
-        let iterable = [1, 2, 3, 4, 5, 6];
-        for (index of iterable) {
+        // register 4 first airlines        
+        for (let index = 0; index <= 5; index ++) {
             
+            let fundAirlineValue = self.web3.utils.toWei("10", "ether");
             let firstAirline = self.commonConfig.airlines[0];
             let airline = self.commonConfig.airlines[index];
 
@@ -62,18 +62,16 @@ module.exports = class Contract {
                 .registerAirline(airline.address, airline.name)
                     .send({ from: firstAirline.address, gas: this.defaultGas }, (error, response) => {                                                                     
                     
-                    if (!error) {
-                        
-                        let value = self.web3.utils.toWei("10", "ether");      
+                    if (!error) {                                                 
 
                         // fund airline
                         self.flightSuretyApp.methods
-                        .fundAirline()
-                        .send({ from: airline.address, value:value, gas: this.defaultGas }, (error, response) => {            
-                            if (error) {
-                                alert(error);
-                            }       
-                        });  
+                            .fundAirline()
+                            .send({ from: airline.address, value: fundAirlineValue, gas: this.defaultGas }, (error, response) => {            
+                                if (error) {
+                                    alert(error);
+                                }       
+                            });  
                     }
                     else {
                         console.log(error);
@@ -82,6 +80,14 @@ module.exports = class Contract {
         }   
         
         callback();
+    }
+
+    getNumRegAirlines(callback) {
+        let self = this;     
+
+        self.flightSuretyApp.methods.getNumRegAirlines().call((error, response) => {            
+            callback(response);
+        });
     }
 
     getBalance(address, callback) {   
@@ -110,22 +116,25 @@ module.exports = class Contract {
     isSuretyAlreadyBought(flightIndex, address, callback) {        
          
         let self = this;    
-        let flight = self.commonConfig.flights[flightIndex];      
+        let flight = self.commonConfig.flights[flightIndex];
+        let airline = self.commonConfig.airlines[flight.airlineIndex]      
 
         return self.flightSuretyApp.methods
-            .isSuretyAlreadyBought(flight.description, flight.flightCode, flight.airline)
+            .isSuretyAlreadyBought(flight.description, flight.flightCode, airline.address)
             .call({ from: address}, callback);       
     }
 
     buySurety(flightIndex, address, value, callback) {
         
         let self = this;    
-        let flight = self.commonConfig.flights[flightIndex];                   
+        let flight = self.commonConfig.flights[flightIndex];      
+        let airline = self.commonConfig.airlines[flight.airlineIndex]      
+             
 
         value = self.web3.utils.toWei(value, "ether");       
                        
         return self.flightSuretyApp.methods
-            .buySurety(flight.description, flight.flightCode, flight.airline)
+            .buySurety(flight.description, flight.flightCode, airline.address)
             .send({ 
                 from: address, 
                 value: value,
