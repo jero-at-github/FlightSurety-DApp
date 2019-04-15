@@ -141,12 +141,7 @@ require("./flightsurety.css");
 
                 buySurety();
             });
-
-            document.querySelector("#btnBuySurety").addEventListener("click", () => {      
-
-                buySurety();
-            });
-
+            
             document.querySelector("#btnRegisterAirlines").addEventListener("click", () => {      
 
                 registerAirlines();
