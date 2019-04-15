@@ -118,9 +118,10 @@ contract FlightSuretyData {
 
     modifier requireIsAirlineNotFunded(address airlineAddress)
     {
-        require(airlines[airlineAddress].isCreated == true && airlines[airlineAddress].isFunded == false, "The airline was already funded!");
+        require(airlines[airlineAddress].isCreated == true, "The airline was not registered!");
+        require(airlines[airlineAddress].isFunded == false, "The airline was already funded!");
         _;
-    }               
+    }  
    
     modifier requireIsSuretyNotBought(string description, string flightCode, address airline, address sender) {
         
