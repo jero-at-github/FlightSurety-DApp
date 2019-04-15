@@ -11,7 +11,7 @@ contract('Flight Surety Flights Tests', async (accounts) => {
     describe('Flights registrations  ', function () {       
 
         var config;
-        const INSURANCE_PRICE = web3.utils.toWei("1", "ether");
+        const SURETY_PRICE = web3.utils.toWei("1", "ether");
 
         before('setup contract', async () => {
             config = await Test.Config(accounts);       
@@ -33,12 +33,28 @@ contract('Flight Surety Flights Tests', async (accounts) => {
                     Math.floor(Date.now() / 1000),
                     config.flights[i].airline
                 );
-/*
-                let key = getKey(...)
-                let flight = await config.flightSuretyApp.getFlight(key);
-                console.log(flights);
-*/                
             }                                        
+        });       
+
+        it('Passengers can buy a surety', async () => {                                  
+          
+            // a passenger can buy a surety
+            await config.flightSuretyApp.buySurety(
+                config.flights[0].description,
+                config.flights[0].flightCode,                
+                config.flights[0].airline, 
+                { from: config.passengers[0], value: SURETY_PRICE }
+            );
+           
+            // a passenger can't buy twice the same surety            
+            await truffleAssert.reverts(
+                config.flightSuretyApp.buySurety(
+                    config.flights[0].description,
+                    config.flights[0].flightCode,                
+                    config.flights[0].airline, 
+                    { from: config.passengers[0], value: SURETY_PRICE }
+                ), "revert " + "This passenger bought already a surety for this flight!"
+            );           
         });       
         
     })

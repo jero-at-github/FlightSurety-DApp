@@ -22,6 +22,7 @@ var Config = async function(accounts) {
         testAddresses: accounts,
         airlines: commonConfig.airlines,
         flights: commonConfig.flights,
+        passengers: commonConfig.passengers,
         flightSuretyData: flightSuretyData,
         flightSuretyApp: flightSuretyApp
     }
