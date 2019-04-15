@@ -76,6 +76,14 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
                 "revert " + "Ether sent is not enough to fund an airline!"
             );
         });        
+
+        it("Airlines can't be funded if they are not registered", async () => {
+                                    
+            await truffleAssert.reverts(
+                config.flightSuretyApp.fundAirline({ from: config.airlines[6].address, value: FUND_PRICE }), 
+                "revert " + "The airline was already funded!"
+            );
+        });
        
         it("Multiparty registration", async () => {
 
