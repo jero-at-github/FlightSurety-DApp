@@ -24,7 +24,7 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
                                     
             await truffleAssert.reverts(
                 config.flightSuretyApp.fundAirline({ from: config.airlines[1].address, value: FUND_PRICE }), 
-                "revert " + "The airline was already funded!"
+                "revert " + "The airline was not registered!"
             );
         });
 
@@ -54,6 +54,7 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
                 assert.equal(airline.isFunded, true, "Airline was not properly funded!");                
             }                      
         });
+
 
         it("Airlines can't register if they are not funded", async () => {
             
@@ -94,6 +95,14 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
             await config.flightSuretyApp.registerAirline(config.airlines[5].address, config.airlines[5].address, { from: config.airlines[2].address });
             existAirline = await config.flightSuretyApp.isAirline.call(config.airlines[5].address);
             assert.equal(existAirline, false, "Only 1 vote is not enough!");          
+
+            // at this point the airline can't be funded
+            /*
+            await truffleAssert.reverts(
+                config.flightSuretyApp.fundAirline({ from: config.airlines[5].address, value: FUND_PRICE }), 
+                "revert " + "The airline was not registered!"
+            );
+            */     
 
             // register 5th airline (second attempt using the same registrator). Has to fail.
             await truffleAssert.reverts(
