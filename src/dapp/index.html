@@ -65,7 +65,7 @@
                 <div class="col-11" style="margin-top: 20px;">                                                       
                     <select id="flightsList"> 
                         <option v-for="(value, key, index) in airlines_flights.flights" v-bind:value="key">   
-                                <!-- {{ airlines_flights.airlines[key].name }} -->
+                                {{ airlines_flights.airlines[value.airlineIndex].name }}
                                 {{ value.flightCode }}  
                                 {{ value.description }}       
                         </option>

@@ -40,32 +40,32 @@ function load(accounts) {
             {
                 "description": "Frankfurt-Bangkok",
                 "flightCode": "FRA123",
-                "airline": null 
+                "airlineIndex": null 
             },
             {
                 "description": "New York-Miami",
                 "flightCode": "AA783",
-                "airline": null
+                "airlineIndex": null
             },
             {
                 "description": "New York-Sao Paulo",
                 "flightCode": "AA933",
-                "airline": null
+                "airlineIndex": null
             },
             {
                 "description": "Madrid-Malaga",
                 "flightCode": "MA839",
-                "airline": null
+                "airlineIndex": null
             },
             {
                 "description": "Valencia-Buenos Aires",
                 "flightCode": "DU930",
-                "airline": null
+                "airlineIndex": null
             },        
             {
                 "description": "Dublin-London",
                 "flightCode": "CA115",
-                "airline": null
+                "airlineIndex": null
             }
         ],
         "passengers": []
@@ -82,12 +82,12 @@ function load(accounts) {
     }
 
     // Associate flights with airlines
-    result.flights[0].airline = accounts[1]; // Lufthansa
-    result.flights[1].airline = accounts[2]; // American Airlines
-    result.flights[2].airline = accounts[2]; // American Airlines
-    result.flights[3].airline = accounts[3]; // Iberia
-    result.flights[4].airline = accounts[3]; // Iberia
-    result.flights[5].airline = accounts[4]; // Ryanair
+    result.flights[0].airlineIndex = 0; // Lufthansa
+    result.flights[1].airlineIndex = 1; // American Airlines
+    result.flights[2].airlineIndex = 1; // American Airlines
+    result.flights[3].airlineIndex = 2; // Iberia
+    result.flights[4].airlineIndex = 2; // Iberia
+    result.flights[5].airlineIndex = 3; // Ryanair
 
     // Set passengers addresses
     for (let counter = 8; counter <=12; counter ++) {
