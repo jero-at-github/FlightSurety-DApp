@@ -10,7 +10,7 @@ module.exports = class Contract {
         let configNetwork = Config[network];
         this.web3 = new Web3(new Web3.providers.HttpProvider(configNetwork.url));
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, configNetwork.appAddress);
-        
+        this.contractAddress = this.flightSuretyApp._address;
         this.commonConfig = Config.commonConfig;
         this.initialize(callback);                
     }
@@ -43,6 +43,10 @@ module.exports = class Contract {
             .send({ from: self.commonConfig.owner}, (error, result) => {
                 callback(error, payload);
             });
+    }
+
+    registerAirlines() {
+        
     }
 
     getBalance(address, callback) {   

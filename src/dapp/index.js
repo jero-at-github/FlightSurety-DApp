@@ -65,6 +65,14 @@ require("./flightsurety.css");
             showBalance(); 
             showBuyButton();
             showFunds();
+            showContractBalance();
+        }
+
+        function showContractBalance() {
+
+            contract.getBalance(contract.contractAddress, (response) => {                
+                document.querySelector("#contractBalance").textContent = response;
+            });
         }
 
         function showBalance() {
@@ -123,7 +131,7 @@ require("./flightsurety.css");
             refreshInfo();
         }
   
-        initListeners();       
+        initListeners();                 
     });            
 
 })();
