@@ -18,6 +18,7 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
 
             // autorize contractApp to call functions of contractData
             await config.flightSuretyData.authorizeContract(config.flightSuretyApp.address);
+            await config.flightSuretyApp.fundAirline({ from: config.airlines[0].address, value: FUND_PRICE });
         });
        
         it("Airlines can't be funded if they are not registered", async () => {
@@ -36,7 +37,7 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
             // first airline was automatically registered when deploying the contract
             existAirline = await config.flightSuretyApp.isAirline.call(config.airlines[0].address);
             assert.equal(existAirline, true, "The first arline should be registered automatically.");
-            
+
             // first airline is funded, it should success registering airlines           
             // register up to 4 airlines                                
             for (let i = 2; i <= 4; i ++) {               
@@ -46,13 +47,13 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
                 assert.equal(existAirline, true, "The registered airline doesn't exist.");                     
             } 
 
-            // fund up to 4 airlines with (no multiparty is needed)                                
+            // fund up to 4 airlines with (no multiparty is needed)                                          
             for (let i = 2; i <= 4; i ++) {      
 
                 await config.flightSuretyApp.fundAirline({ from: config.airlines[i].address, value: FUND_PRICE });
                 airline = await config.flightSuretyApp.getAirline(config.airlines[i].address);
                 assert.equal(airline.isFunded, true, "Airline was not properly funded!");                
-            }                      
+            }             
         });
 
 
@@ -96,14 +97,14 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
             existAirline = await config.flightSuretyApp.isAirline.call(config.airlines[5].address);
             assert.equal(existAirline, false, "Only 1 vote is not enough!");          
 
-            // at this point the airline can't be funded
-            /*
+            // at this point the airline can't be funded   
+            /*        
             await truffleAssert.reverts(
                 config.flightSuretyApp.fundAirline({ from: config.airlines[5].address, value: FUND_PRICE }), 
                 "revert " + "The airline was not registered!"
             );
-            */     
-
+            */
+              
             // register 5th airline (second attempt using the same registrator). Has to fail.
             await truffleAssert.reverts(
                 config.flightSuretyApp.registerAirline(config.airlines[5].address, config.airlines[5].name, { from: config.airlines[2].address }), 

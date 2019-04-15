@@ -14,6 +14,10 @@ module.exports = function(deployer, network, accounts) {
                     let contractData = await FlightSuretyData.deployed();
                     contractData.authorizeContract(FlightSuretyApp.address);
 
+                    let contractApp = await FlightSuretyApp.deployed();   
+                    const FUND_PRICE = web3.utils.toWei("10", "ether");
+                    contractApp.fundAirline({from: commonConfig.airlines[0].address, value: FUND_PRICE});
+
                     let config = {
                         "localhost": {
                             url: 'http://localhost:7545',

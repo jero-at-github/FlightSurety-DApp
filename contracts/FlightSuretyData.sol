@@ -323,11 +323,10 @@ contract FlightSuretyData {
                 name: firstAirlineName,
                 isCreated: true,
                 isRegistered: true,
-                isFunded: true
+                isFunded: false
             });
 
-        numRegAirlines ++;            
-        numFundedAirlines ++;
+        numRegAirlines ++;                    
     }
 
    /**
