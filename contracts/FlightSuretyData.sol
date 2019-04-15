@@ -583,7 +583,7 @@ contract FlightSuretyData {
     */   
     function buySurety(string description, string flightCode, address airline, address sender, uint value)
         requireIsCallerAuthorized
-        //requireIsSuretyNotBought(description, flightCode, airline, sender) // Error while compiling: Stack too deep         
+        //requireIsSuretyNotBought(description, flightCode, airline, sender) // Error while compiling: Stack too deep, implemented inside the function        
         external
         payable
     {
@@ -605,6 +605,7 @@ contract FlightSuretyData {
     */
     function creditInsurees
             (address passenger, uint fund) 
+            requireIsCallerAuthorized
             external        
     {
         funds[passenger] = funds[passenger].add(fund);
@@ -615,25 +616,36 @@ contract FlightSuretyData {
      *  @dev Transfers eligible payout funds to insuree
      *
     */
-    function pay
+    function payFunds
             (uint amount, address passenger)
+            requireIsCallerAuthorized
             external
             payable
     {
-        //require()
+        require(passenger == tx.origin, "Contracts not allowed");
+        require(funds[passenger] >= amount, "Insuficient funds");
+
+        uint _amount = funds[passenger];
+        funds[passenger] = funds[passenger].sub(_amount);
+        
+        passenger.transfer(_amount);
     }
 
    /**
     * @dev Initial funding for the insurance. Unless there are too many delayed flights
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
-    */   
+    */       
     function fund
-                            (   
-                            )
-                            public
-                            payable
-    {
+            (address passenger) 
+            requireIsCallerAuthorized
+            external        
+    {        
+        uint _fund = funds[passenger];
+        uint _halfFund = _fund.div(2);
+        _fund = _fund.add(_halfFund);
+        
+        funds[passenger] = funds[passenger] = _fund;
     }
 
     function getFlightKey
@@ -657,7 +669,7 @@ contract FlightSuretyData {
                             external 
                             payable 
     {
-        fund();
+        //fund();
     }
 
 

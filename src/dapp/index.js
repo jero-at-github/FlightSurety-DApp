@@ -2,13 +2,15 @@ let Contract = require("./contract.js");
 require("./flightsurety.css");
 
 (async() => {
-        
+    
+
+
     let contract = new Contract('localhost', () => {
 
         let result = null;
         let selectedPassanger = null;
         let flightIndex = null;
-        let vueShowBuy;
+        let vueShowBuy;        
 
         vueShowBuy = new Vue({
             el: '#showBuyButton',
@@ -62,6 +64,7 @@ require("./flightsurety.css");
         */
 
         function refreshInfo() {
+
             showBalance(); 
             showBuyButton();
             showFunds();
@@ -130,8 +133,15 @@ require("./flightsurety.css");
 
             refreshInfo();
         }
-  
-        initListeners();                 
+                   
+        contract.registerAirlines(()=> {                    
+            document.querySelector("#numRegisteredAirlines").textContent = "4";                  
+            setTimeout( () => {
+                showContractBalance();
+            }, 2000);            
+        });
+
+        initListeners(); 
     });            
 
 })();

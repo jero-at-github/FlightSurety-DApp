@@ -11,14 +11,15 @@ module.exports = class Contract {
         this.web3 = new Web3(new Web3.providers.HttpProvider(configNetwork.url));
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, configNetwork.appAddress);
         this.contractAddress = this.flightSuretyApp._address;
-        this.commonConfig = Config.commonConfig;
-        this.initialize(callback);                
+        this.commonConfig = Config.commonConfig;        
+
+        this.initialize(callback);                        
     }
 
     initialize(callback) {
 
         this.web3.eth.getAccounts((error, accts) => {                      
-            callback();
+            callback();        
         });
     }
 
@@ -45,8 +46,39 @@ module.exports = class Contract {
             });
     }
 
-    registerAirlines() {
+    registerAirlines(callback) {
+
+        let self = this;   
+
+        // register 4 first airlines
+        let iterable = [1, 2, 3, 4];
+        for (index of iterable) {
+            
+            let firstAirline = self.commonConfig.airlines[0];
+            let airline = self.commonConfig.airlines[index];
+
+            // register airline
+            self.flightSuretyApp.methods
+                .registerAirline(airline.address, airline.name)
+                    .send({ from: firstAirline.address, gas: this.defaultGas }, (error, response) => {
+                                                         
+                    let value = self.web3.utils.toWei("10", "ether");      
+                    
+                    if (!error) {
+                        
+                        // fund airline
+                        self.flightSuretyApp.methods
+                        .fundAirline()
+                        .send({ from: airline.address, value:value, gas: this.defaultGas }, (error, response) => {            
+                            if (error) {
+                                alert(error);
+                            }       
+                        });  
+                    }                                                          
+                });  
+        }   
         
+        callback();
     }
 
     getBalance(address, callback) {   

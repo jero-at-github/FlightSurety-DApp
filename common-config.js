@@ -58,12 +58,12 @@ function load(accounts) {
                 "airline": null
             },
             {
-                "description": "Dublin-London",
+                "description": "Valencia-Buenos Aires",
                 "flightCode": "DU930",
                 "airline": null
             },        
             {
-                "description": "Montreal-Seattle",
+                "description": "Dublin-London",
                 "flightCode": "CA115",
                 "airline": null
             }
@@ -86,8 +86,8 @@ function load(accounts) {
     result.flights[1].airline = accounts[2]; // American Airlines
     result.flights[2].airline = accounts[2]; // American Airlines
     result.flights[3].airline = accounts[3]; // Iberia
-    result.flights[4].airline = accounts[4]; // Ryanair
-    result.flights[5].airline = accounts[5]; // Air Canada
+    result.flights[4].airline = accounts[3]; // Iberia
+    result.flights[5].airline = accounts[4]; // Ryanair
 
     // Set passengers addresses
     for (let counter = 8; counter <=12; counter ++) {
