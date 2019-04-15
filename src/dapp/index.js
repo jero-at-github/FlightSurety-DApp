@@ -109,6 +109,17 @@ require("./flightsurety.css");
             });            
         }       
 
+        function registerAirlines() {
+            
+            contract.registerAirlines(()=> {                    
+                document.querySelector("#numRegisteredAirlines").textContent = "4";   
+                               
+                setTimeout( () => {
+                    showContractBalance();
+                }, 2000);                           
+            });    
+        }
+        
         function initListeners() {
 
              // init listeners
@@ -131,15 +142,18 @@ require("./flightsurety.css");
                 buySurety();
             });
 
+            document.querySelector("#btnBuySurety").addEventListener("click", () => {      
+
+                buySurety();
+            });
+
+            document.querySelector("#btnRegisterAirlines").addEventListener("click", () => {      
+
+                registerAirlines();
+            });            
+
             refreshInfo();
-        }
-                   
-        contract.registerAirlines(()=> {                    
-            document.querySelector("#numRegisteredAirlines").textContent = "4";                  
-            setTimeout( () => {
-                showContractBalance();
-            }, 2000);            
-        });
+        }                           
 
         initListeners(); 
     });            
