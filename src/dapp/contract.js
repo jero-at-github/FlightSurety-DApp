@@ -51,7 +51,7 @@ module.exports = class Contract {
         let self = this;   
 
         // register 4 first airlines
-        let iterable = [1, 2, 3, 4];
+        let iterable = [1, 2, 3, 4, 5, 6];
         for (index of iterable) {
             
             let firstAirline = self.commonConfig.airlines[0];
@@ -60,12 +60,12 @@ module.exports = class Contract {
             // register airline
             self.flightSuretyApp.methods
                 .registerAirline(airline.address, airline.name)
-                    .send({ from: firstAirline.address, gas: this.defaultGas }, (error, response) => {
-                                                         
-                    let value = self.web3.utils.toWei("10", "ether");      
+                    .send({ from: firstAirline.address, gas: this.defaultGas }, (error, response) => {                                                                     
                     
                     if (!error) {
                         
+                        let value = self.web3.utils.toWei("10", "ether");      
+
                         // fund airline
                         self.flightSuretyApp.methods
                         .fundAirline()
@@ -74,7 +74,10 @@ module.exports = class Contract {
                                 alert(error);
                             }       
                         });  
-                    }                                                          
+                    }
+                    else {
+                        console.log(error);
+                    }
                 });  
         }   
         
