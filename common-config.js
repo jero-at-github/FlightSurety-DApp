@@ -68,7 +68,8 @@ function load(accounts) {
                 "airlineIndex": null
             }
         ],
-        "passengers": []
+        "passengers": [],
+        "oracles":  []
     }
 
     let result = configuration;
@@ -92,6 +93,11 @@ function load(accounts) {
     // Set passengers addresses
     for (let counter = 8; counter <=12; counter ++) {
         result.passengers.push(accounts[counter]);        
+    }    
+
+    // Set oracle addresses
+    for (let counter = 13; counter <=32; counter ++) {
+        result.oracles.push(accounts[counter]);        
     }    
 
     return result;

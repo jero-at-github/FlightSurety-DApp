@@ -397,7 +397,7 @@ contract FlightSuretyData {
                                 (
                                     address airline,
                                     string memory flight,
-                                    uint256 timestamp,
+                                    string description,
                                     uint8 statusCode
                                 )
                                 internal
@@ -405,26 +405,28 @@ contract FlightSuretyData {
     {
     }
 
-
     // Generate a request for oracles to fetch flight information
     function fetchFlightStatus
                         (
+                            string description,
+                            string flightCode,        
                             address airline,
-                            string flight,
-                            uint256 timestamp                            
-                        )
-                        external
+                            address sender
+                        ) external returns (uint8)
+                        
     {
-        uint8 index = getRandomIndex(msg.sender);
+        uint8 index = getRandomIndex(sender);
 
         // Generate a unique key for storing the request
-        bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp));
-        oracleResponses[key] = ResponseInfo({
-                                                requester: msg.sender,
-                                                isOpen: true
-                                            });
+        bytes32 key = keccak256(abi.encodePacked(index, airline, flightCode, description));
+        oracleResponses[key] = 
+            ResponseInfo(
+                {
+                    requester: sender,
+                    isOpen: true
+                });      
 
-        emit OracleRequest(index, airline, flight, timestamp);
+        return index;                              
     } 
 
 // endregion
@@ -460,48 +462,38 @@ contract FlightSuretyData {
     mapping(bytes32 => ResponseInfo) private oracleResponses;
 
     // Event fired each time an oracle submits a response
-    event FlightStatusInfo(address airline, string flight, uint256 timestamp, uint8 status);
+    event FlightStatusInfo(address airline, string flight, string description, uint8 status);
 
-    event OracleReport(address airline, string flight, uint256 timestamp, uint8 status);
-
-    // Event fired when flight status request is submitted
-    // Oracles track this and if they have a matching index
-    // they fetch data and submit a response
-    event OracleRequest(uint8 index, address airline, string flight, uint256 timestamp);
-
+    event OracleReport(address airline, string flight, string description, uint8 status);
+   
 
     // Register an oracle with the contract
     function registerOracle
-                            (
-                            )
-                            external
-                            payable
+        (address sender, uint value)
+        external
+        payable
     {
         // Require registration fee
-        require(msg.value >= REGISTRATION_FEE, "Registration fee is required");
+        require(value >= REGISTRATION_FEE, "Registration fee is required");
 
-        uint8[3] memory indexes = generateIndexes(msg.sender);
+        uint8[3] memory indexes = generateIndexes(sender);
 
-        oracles[msg.sender] = Oracle({
-                                        isRegistered: true,
-                                        indexes: indexes
-                                    });
+        oracles[sender] = 
+            Oracle({
+                isRegistered: true,
+                indexes: indexes
+            });
     }
 
-    function getMyIndexes
-                            (
-                            )
-                            view
-                            external
-                            returns(uint8[3])
+    function getMyIndexes (address sender)
+        view
+        external
+        returns(uint8[3])
     {
-        require(oracles[msg.sender].isRegistered, "Not registered as an oracle");
+        require(oracles[sender].isRegistered, "Not registered as an oracle");
 
-        return oracles[msg.sender].indexes;
+        return oracles[sender].indexes;
     }
-
-
-
 
     // Called by oracle when a response is available to an outstanding request
     // For the response to be accepted, there must be a pending request that is open
@@ -511,29 +503,35 @@ contract FlightSuretyData {
                         (
                             uint8 index,
                             address airline,
-                            string flight,
-                            uint256 timestamp,
-                            uint8 statusCode
+                            string flightCode,
+                            string description,
+                            uint8 statusCode,
+                            address sender
                         )
                         external
     {
-        require((oracles[msg.sender].indexes[0] == index) || (oracles[msg.sender].indexes[1] == index) || (oracles[msg.sender].indexes[2] == index), "Index does not match oracle request");
+        require(
+            (oracles[sender].indexes[0] == index) || 
+            (oracles[sender].indexes[1] == index) || 
+            (oracles[sender].indexes[2] == index), 
+            "Index does not match oracle request"
+        );
 
 
-        bytes32 key = keccak256(abi.encodePacked(index, airline, flight, timestamp)); 
-        require(oracleResponses[key].isOpen, "Flight or timestamp do not match oracle request");
+        bytes32 key = keccak256(abi.encodePacked(index, airline, flightCode, description)); 
+        require(oracleResponses[key].isOpen, "Flight or description do not match oracle request");
 
-        oracleResponses[key].responses[statusCode].push(msg.sender);
+        oracleResponses[key].responses[statusCode].push(sender);
 
         // Information isn't considered verified until at least MIN_RESPONSES
         // oracles respond with the *** same *** information
-        emit OracleReport(airline, flight, timestamp, statusCode);
+        emit OracleReport(airline, flightCode, description, statusCode);
         if (oracleResponses[key].responses[statusCode].length >= MIN_RESPONSES) {
 
-            emit FlightStatusInfo(airline, flight, timestamp, statusCode);
+            emit FlightStatusInfo(airline, flightCode, description, statusCode);
 
             // Handle flight status as appropriate
-            processFlightStatus(airline, flight, timestamp, statusCode);
+            processFlightStatus(airline, flightCode, description, statusCode);
         }
     }
   

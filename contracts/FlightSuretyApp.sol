@@ -16,6 +16,7 @@ contract FlightSuretyApp {
 
     uint private FUND_PRICE = 10 ether;   
     uint private MAX_BUY_PRICE = 1 ether;  
+    uint256 public constant REGISTRATION_FEE = 1 ether;
 
     using SafeMath for uint256; // Allow SafeMath functions to be called for all uint256 types (similar to "prototype" in Javascript)    
 
@@ -246,6 +247,60 @@ contract FlightSuretyApp {
 
 // endregion
 
+// Oracles
+
+    // Event fired when flight status request is submitted
+    // Oracles track this and if they have a matching index
+    // they fetch data and submit a response
+    event OracleRequest(uint8 index, address airline, string flightCode, string description);
+
+    function fetchFlightStatus (
+            string description,
+            string flightCode,        
+            address airline
+        )
+        external
+    {
+        uint8 index = flightSuretyData.fetchFlightStatus(description, flightCode, airline, msg.sender);
+        emit OracleRequest(index, airline, flightCode, description);   
+    }
+
+    function registerOracle()
+        external
+        payable 
+    {
+        flightSuretyData.registerOracle(msg.sender, msg.value);
+    }
+
+    function getMyIndexes ()
+        view
+        external
+        returns(uint8[3])
+    {
+        return flightSuretyData.getMyIndexes(msg.sender);
+    }
+
+    function submitOracleResponse(
+            uint8 index,
+            address airline,
+            string flightCode,
+            string description,
+            uint8 statusCode)
+            external 
+    {
+        flightSuretyData.submitOracleResponse(
+            index,
+            airline,
+            flightCode,
+            description,
+            statusCode,
+            msg.sender
+        );
+    }
+
+
+// endregion
+
 }   
 
 contract FlightSuretyData {
@@ -260,4 +315,8 @@ contract FlightSuretyData {
     function buySurety(string description, string flightCode, address airline, address sender, uint value) external payable;
     function isSuretyAlreadyBought(string description, string flightCode, address airline, address sender) public view returns (bool);
     function getPassengerFunds(address passenger) public view returns (uint);
+    function fetchFlightStatus(string description, string flightCode, address airline, address sender) external returns (uint8);
+    function registerOracle(address sender, uint value) external payable;
+    function getMyIndexes (address sender) view external returns(uint8[3]);  
+    function submitOracleResponse(uint8 index, address airline, string flightCode, string description, uint8 statusCode, address sender) external;
 }
