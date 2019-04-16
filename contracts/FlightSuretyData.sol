@@ -18,6 +18,9 @@ contract FlightSuretyData {
     uint8 private constant STATUS_CODE_LATE_TECHNICAL = 40;
     uint8 private constant STATUS_CODE_LATE_OTHER = 50;
 
+    // Fee to be paid when registering oracle
+    uint256 public constant REGISTRATION_FEE = 1 ether;
+
     address private contractOwner;                              // Account used to deploy contract
     mapping(address => uint256) private authorizedContracts;    // External contracts authorized to call functions of data contract
     bool private operational = true;                            // Blocks all state changes throughout the contract if false    
@@ -196,6 +199,9 @@ contract FlightSuretyData {
     }
 
 // endregion
+
+
+// region Smart contract functions
 
     /********************************************************************************************/
     /*                                     SMART CONTRACT FUNCTIONS                             */
@@ -421,14 +427,12 @@ contract FlightSuretyData {
         emit OracleRequest(index, airline, flight, timestamp);
     } 
 
+// endregion
 
 // region ORACLE MANAGEMENT
 
     // Incremented to add pseudo-randomness at various points
-    uint8 private nonce = 0;    
-
-    // Fee to be paid when registering oracle
-    uint256 public constant REGISTRATION_FEE = 1 ether;
+    uint8 private nonce = 0;        
 
     // Number of oracles that must respond for valid status
     uint256 private constant MIN_RESPONSES = 3;
