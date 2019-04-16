@@ -97,13 +97,11 @@ contract('Flight Surety Airlines Tests', async (accounts) => {
             existAirline = await config.flightSuretyApp.isAirline.call(config.airlines[5].address);
             assert.equal(existAirline, false, "Only 1 vote is not enough!");          
 
-            // at this point the airline can't be funded   
-            /*        
+            // at this point the airline can't be funded                
             await truffleAssert.reverts(
                 config.flightSuretyApp.fundAirline({ from: config.airlines[5].address, value: FUND_PRICE }), 
                 "revert " + "The airline was not registered!"
-            );
-            */
+            );        
               
             // register 5th airline (second attempt using the same registrator). Has to fail.
             await truffleAssert.reverts(
