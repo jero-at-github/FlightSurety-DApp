@@ -124,8 +124,10 @@ contract FlightSuretyApp {
 
      modifier checkFundValue(address sender, uint value) {
         _;
-        uint amountToReturn = value.sub(FUND_PRICE);
-        sender.transfer(amountToReturn);
+        if (value > FUND_PRICE) {
+            uint amountToReturn = value.sub(FUND_PRICE);
+            sender.transfer(amountToReturn);
+        }             
     }
 
     modifier checkBuyValue(address sender, uint value) {
