@@ -1,6 +1,6 @@
 
-import http from 'http'
-import app from './server'
+let http = require('http');
+let app = require('./server');
 
 const server = http.createServer(app)
 let currentApp = app
