@@ -57,7 +57,7 @@ flightSuretyApp.events.OracleReport({
     } 
     else {
         console.log("OracleReport");
-        console.log(event);
+        //console.log(event);
     }        
 });
 
@@ -91,10 +91,11 @@ function submitResponses(event) {
                         .send({ from: oracle, gas: defaultGas }, (error, response) => {
 
                             if (!error) {
-                                console.log("Oracle response #" + a + " submited");
+                                console.log("Success: Oracle response #" + a + " submited");
                             }
                             else {
-                                console.log(error);
+                                //console.log(error);
+                                console.log('\nError', idx, oracleIndexes[idx], flightCode, description);    
                             }
                         });                    
                 }
