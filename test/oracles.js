@@ -16,6 +16,9 @@ contract('Oracles', async (accounts) => {
 
   before('setup contract', async () => {
     config = await Test.Config(accounts);
+
+    // autorize contractApp to call functions of contractData
+    await config.flightSuretyData.authorizeContract(config.flightSuretyApp.address);
   });
 
 
