@@ -1,3 +1,4 @@
+let moment = require("moment");
 
 // This function allows to expose the accounts associated to the correspdonding entities.
 // It is used in the deploy script, the DApp UI and the tests.
@@ -98,7 +99,7 @@ function load(accounts) {
 
     for (let counter = 0; counter <= 5; counter ++) {
         let date = new Date().toJSON().slice(0,10).replace(/-/g,'/');
-        result.flights[counter].description +=" " + date;
+        result.flights[counter].description +=" [" + moment().format("MM ddd, YYYY hh:mm:ss a") + "]";
     }    
 
     // Set passengers addresses
