@@ -7,8 +7,9 @@ require("./flightsurety.css");
 
         let result = null;
         let selectedPassanger = null;
-        let flightIndex = null;
-        let vueShowBuy;        
+        let flightIndex = "";
+        let flightIndex2 = "";
+        let vueShowBuy;                
 
         vueShowBuy = new Vue({
             el: '#showBuyButton',
@@ -34,7 +35,7 @@ require("./flightsurety.css");
             }
         })
 
-        new Vue({
+        let vueFlightsList2 = new Vue({
             el: '#flightsList2',
             data: {
                 airlines_flights: {
@@ -81,7 +82,7 @@ require("./flightsurety.css");
         }
 
         function showBuyButton(flight) {
-                       
+                  
             contract.isSuretyAlreadyBought(flightIndex, selectedPassanger, (error, result) => {                                
                 vueShowBuy.alreadyBought = result;
             });                    
@@ -100,14 +101,28 @@ require("./flightsurety.css");
             value = value.replace(",", ".");
             
             contract.buySurety(flightIndex, selectedPassanger, value, () => {
-                refreshInfo();
+                
+                showBalance(); 
+                showBuyButton();                
+                showContractBalance();                
             });            
         }       
 
         function fetchFlightStatus(event) {
 
-            let flightIndex = event.currentTarget.dataset.index;
-            contract.fetchFlightStatus(flightIndex);
+            flightIndex2 = event.currentTarget.dataset.index;            
+            vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = -1;
+
+            setTimeout( () => {
+                
+                let currentStatusCode = vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode;
+
+                if (currentStatusCode == -1) {
+                    vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = 0;       
+                }                
+            }, 15000);
+            
+            contract.fetchFlightStatus(flightIndex2);
         }
 
         async function registerAirlines() {
@@ -128,14 +143,17 @@ require("./flightsurety.css");
             document.querySelector("#passengersList").addEventListener("change", () => {    
                 
                 selectedPassanger = document.querySelector("#passengersList").value;       
-                refreshInfo();
+                
+                showBalance(); 
+                showBuyButton();
+                showFunds();                                
             });
             selectedPassanger = document.querySelector("#passengersList").value;      
 
             document.querySelector("#flightsList").addEventListener("change", () => {   
 
-                flightIndex = document.querySelector("#flightsList").value;
-                refreshInfo();
+                flightIndex = document.querySelector("#flightsList").value;                                
+                showBuyButton();
             });
             flightIndex = document.querySelector("#flightsList").value;
 
@@ -150,8 +168,9 @@ require("./flightsurety.css");
 
             let btnsFetchFlightStatus = document.querySelectorAll(".btnFetchFlightStatus");
             btnsFetchFlightStatus.forEach( (element, index) => {   
+               
                 element.addEventListener("click", async (event) => {                
-                    fetchFlightStatus(event);
+                    fetchFlightStatus(event);                    
                 });            
             });            
 
@@ -161,8 +180,9 @@ require("./flightsurety.css");
         initListeners(); 
 
         contract.FlightStatusInfoHandler = (statusCode) => {
+            
+            vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = statusCode;            
             showFunds();
-
         }
     });            
 
