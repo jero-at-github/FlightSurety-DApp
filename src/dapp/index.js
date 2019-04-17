@@ -9,7 +9,46 @@ require("./flightsurety.css");
         let selectedPassanger = null;
         let flightIndex = "";
         let flightIndex2 = "";
-        let vueShowBuy;                
+        let vueShowBuy;          
+        let flightResponseLoading = false;      
+
+        Vue.filter('toStatusDescription', function(statusCode) {
+            
+            statusCode = parseInt(statusCode);
+
+            if (statusCode != null) {
+            
+                let result = null;
+                                
+                switch (statusCode) {
+                    case -1:
+                        result = "Loading...";
+                        break;
+                    case 0:
+                        result = "Unknown";
+                        break;
+                    case 10:
+                        result = "On time";    
+                        break;
+                    case 20:
+                        result = "Late airline";                            
+                        break;
+                    case 30:
+                        result = "Late weather";                            
+                        break;
+                    case 40:
+                        result = "Late technical";                            
+                        break;
+                    case 50:
+                        result = "Late other";                            
+                        break;
+                }                                               
+
+                if (result != null) {
+                    return result.toLocaleUpperCase();
+                }                
+            }
+        });
 
         vueShowBuy = new Vue({
             el: '#showBuyButton',
@@ -43,7 +82,7 @@ require("./flightsurety.css");
                     flights: contract.commonConfig.flights
                 }
             }
-        })
+        })        
 
         // Read transaction
         contract.isOperational((error, result) => {
@@ -110,19 +149,27 @@ require("./flightsurety.css");
 
         function fetchFlightStatus(event) {
 
-            flightIndex2 = event.currentTarget.dataset.index;            
-            vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = -1;
+            if (!flightResponseLoading) {
 
-            setTimeout( () => {
+                flightIndex2 = event.currentTarget.dataset.index;            
+                vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = -1;
+
+                setTimeout( () => {
+                    
+                    if (flightResponseLoading) {
+                        let currentStatusCode = vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode;
+
+                        if (currentStatusCode == -1) {
+                            vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = 0;       
+                        }                
+
+                        flightResponseLoading = false;
+                    }
+                }, 20000);
                 
-                let currentStatusCode = vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode;
-
-                if (currentStatusCode == -1) {
-                    vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = 0;       
-                }                
-            }, 15000);
-            
-            contract.fetchFlightStatus(flightIndex2);
+                flightResponseLoading = true;
+                contract.fetchFlightStatus(flightIndex2);                
+            }
         }
 
         async function registerAirlines() {
@@ -196,6 +243,11 @@ require("./flightsurety.css");
             
             vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = statusCode;            
             showFunds();
+            flightResponseLoading = false;
+        }
+
+        function toStatusDescription(statusCode) {
+            return "Alex";
         }
     });            
 
