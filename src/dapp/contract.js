@@ -20,7 +20,7 @@ module.exports = class Contract {
         // events       
         this.flightSuretyApp.events.FlightStatusInfo({
             fromBlock: 0
-        }, function (error, event) {
+        }, (error, event) => {
             if (error) {
                 console.log("Error - FlightStatusInfo");
                 console.log(error)
@@ -28,7 +28,7 @@ module.exports = class Contract {
             else {
                 console.log("FlightStatusInfo");
                 console.log(event);
-                this.FlightStatusInfoHandler();
+                this.FlightStatusInfoHandler(event.returnValues[3]);
             }        
         });
 
