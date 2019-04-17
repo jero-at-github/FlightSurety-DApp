@@ -553,6 +553,9 @@ contract FlightSuretyData {
         // Information isn't considered verified until at least MIN_RESPONSES
         // oracles respond with the *** same *** information       
         if (oracleResponses[key].responses[statusCode].length == MIN_RESPONSES) {
+            
+            delete oracleResponses[key].responses[statusCode];
+            oracleResponses[key].isOpen = false;            
 
             emitStatus = true;
 
