@@ -40,32 +40,38 @@ function load(accounts) {
             {
                 "description": "Frankfurt-Bangkok",
                 "flightCode": "FRA123",
-                "airlineIndex": null 
+                "airlineIndex": null,
+                "statusCode": 0 
             },
             {
                 "description": "New York-Miami",
                 "flightCode": "AA783",
-                "airlineIndex": null
+                "airlineIndex": null,
+                "statusCode": 0 
             },
             {
                 "description": "New York-Sao Paulo",
                 "flightCode": "AA933",
-                "airlineIndex": null
+                "airlineIndex": null,
+                "statusCode": 0 
             },
             {
                 "description": "Madrid-Malaga",
                 "flightCode": "MA839",
-                "airlineIndex": null
+                "airlineIndex": null,
+                "statusCode": 0 
             },
             {
                 "description": "Valencia-Buenos Aires",
                 "flightCode": "DU930",
-                "airlineIndex": null
+                "airlineIndex": null,
+                "statusCode": 0 
             },        
             {
                 "description": "Dublin-London",
                 "flightCode": "CA115",
-                "airlineIndex": null
+                "airlineIndex": null,
+                "statusCode": 0 
             }
         ],
         "passengers": [],
