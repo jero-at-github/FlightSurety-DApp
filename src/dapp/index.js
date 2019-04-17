@@ -174,6 +174,8 @@ require("./flightsurety.css");
 
         async function registerAirlines() {
             
+            document.querySelector("#btnRegisterAirlines").disabled = true;
+
             await contract.registerAirlines(()=> {                    
                                               
                 setTimeout( () => {

@@ -24,8 +24,9 @@
         <div style="float: right; border: solid 1px darkorange; padding: 10px 5px 5px 5px; height: 50px;">
             Contract balance: <span id="contractBalance" class="field-value"></span> Ether
         </div>
-        <div style="float: right; border: solid 1px darkorange; padding: 5px 5px 5px 5px;">
-            <button class="btn btn-primary" id="btnRegisterAirlines">Register extra airlines</button> # registered airlines: <span id="numRegisteredAirlines" class="field-value"></span>
+        <div style="float: right; border: solid 1px darkorange; padding: 5px 5px 5px 5px; height: 50px;">
+            <button class="btn btn-primary" id="btnRegisterAirlines">Register extra airlines</button> 
+            # registered airlines: <span id="numRegisteredAirlines" class="field-value"></span>
         </div>
         <!-- Operational status -->
         <div class="section row top-20">            
@@ -87,14 +88,20 @@
                 <div style="margin-left: 40px;">STATUS CODE</div>
                 <ul id="flightsList2"> 
                     <li v-for="(value, key, index) in airlines_flights.flights" v-bind:value="key" style="margin-top: 25px;">  
-
-                        <span style="border: solid 1px darkorange; padding: 5px 5px 5px 5px;">{{ value.statusCode | toStatusDescription }}</span>
-
-                        <span v-show="value.statusCode == -1"><img src="./ajax-loader.gif" style="padding-left: 65px; padding-right: 65px;" /></span>
-                        <button v-show="value.statusCode >= 0 && value.statusCode <= 10" class="btn btn-primary btnFetchFlightStatus" v-bind:data-index="key" style="margin-bottom: 3px; margin-left: 5px;">Submit to Oracles</button>    
-                        {{ airlines_flights.airlines[value.airlineIndex].name }} - 
-                        <strong>{{ value.flightCode }}</strong> - 
-                        {{ value.description }}                              
+                        <div class="row">
+                            <div class="col-2">
+                                <span style="border: solid 1px darkorange; padding: 5px 5px 5px 5px;">{{ value.statusCode | toStatusDescription }}</span>
+                            </div>
+                            <div class="col-2">
+                                    <span v-show="value.statusCode == -1"><img src="./ajax-loader.gif" style="padding-left: 65px; padding-right: 65px;" /></span>
+                                    <button v-show="value.statusCode >= 0 && value.statusCode <= 10" class="btn btn-primary btnFetchFlightStatus" v-bind:data-index="key" style="margin-top: -12px; margin-left: 5px;">Submit to Oracles</button>    
+                            </div>
+                            <div class="col-8">
+                                {{ airlines_flights.airlines[value.airlineIndex].name }} - 
+                                <strong>{{ value.flightCode }}</strong> - 
+                                {{ value.description }}                                          
+                            </div>    
+                        </div>                                                
                     </li>                    
                 </ul>                                         
             </div>          
