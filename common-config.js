@@ -90,6 +90,11 @@ function load(accounts) {
     result.flights[4].airlineIndex = 2; // Iberia
     result.flights[5].airlineIndex = 3; // Ryanair
 
+    for (let counter = 0; counter <= 5; counter ++) {
+        let date = new Date().toJSON().slice(0,10).replace(/-/g,'/');
+        result.flights[counter].description +=" " + date;
+    }    
+
     // Set passengers addresses
     for (let counter = 8; counter <=12; counter ++) {
         result.passengers.push(accounts[counter]);        
