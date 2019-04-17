@@ -16,6 +16,10 @@ The project is setup to use Ganache UI (port 7545)
 
 ## Develop Client
 
+To compile and deploy:
+
+`npm run deploy-dev`
+
 To run truffle tests:
 
 `npm run test`
@@ -31,7 +35,6 @@ To view dapp:
 ## Develop Server
 
 `npm run server`
-`truffle test ./test/oracles.js`
 
 ## Deploy
 
