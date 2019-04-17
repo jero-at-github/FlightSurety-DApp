@@ -50,18 +50,7 @@ require("./flightsurety.css");
         contract.isOperational((error, result) => {
             console.log(error,result);
             document.querySelector("#operationalStatus").textContent = result;            
-        });            
-
-        // User-submitted transaction
-        /*
-        DOM.elid('submit-oracle').addEventListener('click', () => {
-            let flight = DOM.elid('flight-number').value;
-            // Write transaction
-            contract.fetchFlightStatus(flight, (error, result) => {
-                display('Oracles', 'Trigger oracles', [ { label: 'Fetch Flight Status', error: error, value: result.flight + ' ' + result.timestamp} ]);
-            });
-        })
-        */
+        });                   
 
         function refreshInfo() {
 
@@ -117,6 +106,12 @@ require("./flightsurety.css");
             });            
         }       
 
+        function fetchFlightStatus(event) {
+
+            let flightIndex = event.currentTarget.dataset.index;
+            contract.fetchFlightStatus(flightIndex);
+        }
+
         async function registerAirlines() {
             
             await contract.registerAirlines(()=> {                    
@@ -152,8 +147,14 @@ require("./flightsurety.css");
             });
 
             document.querySelector("#btnRegisterAirlines").addEventListener("click", async () => {      
-
                 await registerAirlines();
+            });            
+
+            let btnsFetchFlightStatus = document.querySelectorAll(".btnFetchFlightStatus");
+            btnsFetchFlightStatus.forEach( (element, index) => {   
+                element.addEventListener("click", async (event) => {                
+                    fetchFlightStatus(event);
+                });            
             });            
 
             refreshInfo();

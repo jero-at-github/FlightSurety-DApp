@@ -30,18 +30,18 @@ module.exports = class Contract {
             .call({ from: self.commonConfig.owner}, callback);
     }
 
-    fetchFlightStatus(flight, callback) {
+    fetchFlightStatus(flightIndex) {
 
         let self = this;
-        let payload = {
-            airline: self.commonConfig.airlines[0],
-            flight: flight,
-            timestamp: Math.floor(Date.now() / 1000)
-        } 
+        let flight = self.commonConfig.flights[flightIndex];  
+        let airline = self.commonConfig.airlines[flight.airlineIndex];     
+        
         self.flightSuretyApp.methods
-            .fetchFlightStatus(payload.airline, payload.flight, payload.timestamp)
-            .send({ from: self.commonConfig.owner}, (error, result) => {
-                callback(error, payload);
+            .fetchFlightStatus(flight.description, flight.flightCode, airline.address)
+            .send({ from: self.commonConfig.owner}, (error, result) => {                
+                if (error) {
+                    alert(error);
+                }
             });
     }
 
@@ -130,7 +130,7 @@ module.exports = class Contract {
          
         let self = this;    
         let flight = self.commonConfig.flights[flightIndex];
-        let airline = self.commonConfig.airlines[flight.airlineIndex]      
+        let airline = self.commonConfig.airlines[flight.airlineIndex];      
 
         return self.flightSuretyApp.methods
             .isSuretyAlreadyBought(flight.description, flight.flightCode, airline.address)
@@ -141,7 +141,7 @@ module.exports = class Contract {
         
         let self = this;    
         let flight = self.commonConfig.flights[flightIndex];      
-        let airline = self.commonConfig.airlines[flight.airlineIndex]      
+        let airline = self.commonConfig.airlines[flight.airlineIndex];      
              
 
         value = self.web3.utils.toWei(value, "ether");       

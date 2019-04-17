@@ -459,14 +459,8 @@ contract FlightSuretyData {
 
     // Track all oracle responses
     // Key = hash(index, flight, timestamp)
-    mapping(bytes32 => ResponseInfo) private oracleResponses;
-
-    // Event fired each time an oracle submits a response
-    event FlightStatusInfo(address airline, string flight, string description, uint8 status);
-
-    event OracleReport(address airline, string flight, string description, uint8 status);
-   
-
+    mapping(bytes32 => ResponseInfo) private oracleResponses;    
+  
     // Register an oracle with the contract
     function registerOracle
         (address sender, uint value)
@@ -507,8 +501,9 @@ contract FlightSuretyData {
                             string description,
                             uint8 statusCode,
                             address sender
-                        )
+                        ) 
                         external
+                        returns (bool)
     {
         require(
             (oracles[sender].indexes[0] == index) || 
@@ -517,6 +512,7 @@ contract FlightSuretyData {
             "Index does not match oracle request"
         );
 
+        bool emitStatus = false;
 
         bytes32 key = keccak256(abi.encodePacked(index, airline, flightCode, description)); 
         require(oracleResponses[key].isOpen, "Flight or description do not match oracle request");
@@ -524,15 +520,16 @@ contract FlightSuretyData {
         oracleResponses[key].responses[statusCode].push(sender);
 
         // Information isn't considered verified until at least MIN_RESPONSES
-        // oracles respond with the *** same *** information
-        emit OracleReport(airline, flightCode, description, statusCode);
+        // oracles respond with the *** same *** information       
         if (oracleResponses[key].responses[statusCode].length >= MIN_RESPONSES) {
 
-            emit FlightStatusInfo(airline, flightCode, description, statusCode);
+            emitStatus = true;
 
             // Handle flight status as appropriate
             processFlightStatus(airline, flightCode, description, statusCode);
         }
+
+        return emitStatus;
     }
   
     // Returns array of three non-duplicating integers from 0-9

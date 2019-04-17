@@ -26,6 +26,10 @@ contract FlightSuretyApp {
 
     address private contractOwner;          // Account used to deploy contract    
 
+    event FlightStatusInfo(address airline, string flight, string description, uint8 status);
+    event OracleRequest(uint8 index, address airline, string flightCode, string description);
+    event OracleReport(address airline, string flight, string description, uint8 status);
+
 // region function modifiers
 
     /********************************************************************************************/
@@ -251,9 +255,7 @@ contract FlightSuretyApp {
 
     // Event fired when flight status request is submitted
     // Oracles track this and if they have a matching index
-    // they fetch data and submit a response
-    event OracleRequest(uint8 index, address airline, string flightCode, string description);
-
+    // they fetch data and submit a response    
     function fetchFlightStatus (
             string description,
             string flightCode,        
@@ -286,9 +288,9 @@ contract FlightSuretyApp {
             string flightCode,
             string description,
             uint8 statusCode)
-            external 
+            external             
     {
-        flightSuretyData.submitOracleResponse(
+        bool emitStatus = flightSuretyData.submitOracleResponse(
             index,
             airline,
             flightCode,
@@ -296,6 +298,12 @@ contract FlightSuretyApp {
             statusCode,
             msg.sender
         );
+
+         emit OracleReport(airline, flightCode, description, statusCode);
+
+         if (emitStatus == true) {
+              emit FlightStatusInfo(airline, flightCode, description, statusCode);
+         }
     }
 
 
@@ -318,5 +326,5 @@ contract FlightSuretyData {
     function fetchFlightStatus(string description, string flightCode, address airline, address sender) external returns (uint8);
     function registerOracle(address sender, uint value) external payable;
     function getMyIndexes (address sender) view external returns(uint8[3]);  
-    function submitOracleResponse(uint8 index, address airline, string flightCode, string description, uint8 statusCode, address sender) external;
+    function submitOracleResponse(uint8 index, address airline, string flightCode, string description, uint8 statusCode, address sender) external returns (bool);
 }

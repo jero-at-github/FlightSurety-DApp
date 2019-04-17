@@ -57,6 +57,7 @@ contract('Oracles', async (accounts) => {
         try {
             // Submit a response...it will only be accepted if there is an Index match
             await config.flightSuretyApp.submitOracleResponse(oracleIndexes[idx], config.airlines[0].address, flightCode, description, STATUS_CODE_ON_TIME, { from: accounts[a] });
+            console.log("Oracle submitted succesfully!");
         }
         catch(e) {
             // Enable this when debugging
