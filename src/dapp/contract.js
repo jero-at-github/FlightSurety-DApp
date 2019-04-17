@@ -8,13 +8,37 @@ module.exports = class Contract {
 
         this.defaultGas = 300000;
         let configNetwork = Config[network];
-        this.web3 = new Web3(new Web3.providers.HttpProvider(configNetwork.url));
+        
+        // This provider doesn't work with events
+        //this.web3 = new Web3(new Web3.providers.HttpProvider(configNetwork.url));         
+        this.web3 = new Web3(new Web3.providers.WebsocketProvider(configNetwork.url.replace("http", "ws")));       
+
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, configNetwork.appAddress);
         this.contractAddress = this.flightSuretyApp._address;
         this.commonConfig = Config.commonConfig;        
-      
+          
+        // events       
+        this.flightSuretyApp.events.FlightStatusInfo({
+            fromBlock: 0
+        }, function (error, event) {
+            if (error) {
+                console.log("Error - FlightStatusInfo");
+                console.log(error)
+            } 
+            else {
+                console.log("FlightStatusInfo");
+                console.log(event);
+                this.FlightStatusInfoHandler();
+            }        
+        });
+
         this.initialize(callback);                        
-    }
+    } 
+    
+    FlightStatusInfoHandler = () => {
+        // to override
+    } 
+
     initialize(callback) {
 
         this.web3.eth.getAccounts((error, accts) => {                      
@@ -41,7 +65,7 @@ module.exports = class Contract {
             .send({ from: self.commonConfig.owner}, (error, result) => {                
                 if (error) {
                     alert(error);
-                }
+                }                
             });
     }
 
@@ -158,6 +182,6 @@ module.exports = class Contract {
 
                     callback();
             });                   
-    }
+    }        
 
 }

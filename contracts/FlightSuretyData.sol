@@ -393,16 +393,47 @@ contract FlightSuretyData {
     * @dev Called after oracle has updated flight status
     *
     */  
-    function processFlightStatus
-                                (
-                                    address airline,
-                                    string memory flight,
-                                    string description,
-                                    uint8 statusCode
-                                )
-                                internal
-                                pure
+    function processFlightStatus(
+        address airline,
+        string flightCode,
+        string description,
+        uint8 statusCode)
+        internal        
     {
+        bool fund = false;
+
+        if (statusCode == STATUS_CODE_UNKNOWN) {
+            fund = false;
+        } 
+        else if (statusCode == STATUS_CODE_ON_TIME) {
+            fund = false;
+        }
+        else if (statusCode == STATUS_CODE_LATE_AIRLINE) {
+            
+        }
+        else if (statusCode == STATUS_CODE_LATE_WEATHER) {
+            fund = true;
+        }
+        else if (statusCode == STATUS_CODE_LATE_TECHNICAL) {
+            fund = true;
+        }
+        else if (statusCode == STATUS_CODE_LATE_OTHER) {
+            fund = true;
+        }
+
+        if (fund) {
+
+            bytes32 flightKey = keccak256(abi.encodePacked(airline, flightCode, description));
+            Surety[] memory _sureties = sureties[flightKey];
+        
+            for (uint i=0; i < _sureties.length; i++) {
+
+                address passenger = _sureties[i].passenger;
+                uint pricePaid = _sureties[i].pricePaid;
+
+                fundPassenger(passenger, pricePaid);                
+            }        
+        }        
     }
 
     // Generate a request for oracles to fetch flight information
@@ -415,7 +446,7 @@ contract FlightSuretyData {
                         ) external returns (uint8)
                         
     {
-        uint8 index = getRandomIndex(sender);
+        uint8 index = getRandomIndex(sender);        
 
         // Generate a unique key for storing the request
         bytes32 key = keccak256(abi.encodePacked(index, airline, flightCode, description));
@@ -521,7 +552,7 @@ contract FlightSuretyData {
 
         // Information isn't considered verified until at least MIN_RESPONSES
         // oracles respond with the *** same *** information       
-        if (oracleResponses[key].responses[statusCode].length >= MIN_RESPONSES) {
+        if (oracleResponses[key].responses[statusCode].length == MIN_RESPONSES) {
 
             emitStatus = true;
 
@@ -635,14 +666,14 @@ contract FlightSuretyData {
     *      resulting in insurance payouts, the contract should be self-sustaining
     *
     */       
-    function fund
-            (address passenger) 
-            requireIsCallerAuthorized
-            external        
+    function fundPassenger
+            (address passenger, uint pricePaid)                                 
+            private
     {        
         uint _fund = funds[passenger];
-        uint _halfFund = _fund.div(2);
-        _fund = _fund.add(_halfFund);
+        uint _halfPricePaid = pricePaid.div(2);
+        uint priceToFund = pricePaid.add(_halfPricePaid);
+        _fund = _fund.add(priceToFund);
         
         funds[passenger] = funds[passenger] = _fund;
     }

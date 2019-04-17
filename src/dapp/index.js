@@ -3,8 +3,6 @@ require("./flightsurety.css");
 
 (async() => {
     
-
-
     let contract = new Contract('localhost', () => {
 
         let result = null;
@@ -161,6 +159,11 @@ require("./flightsurety.css");
         }                           
 
         initListeners(); 
+
+        contract.FlightStatusInfoHandler = (statusCode) => {
+            showFunds();
+
+        }
     });            
 
 })();

@@ -85,7 +85,8 @@
             </div>
             <div class="col-12">                               
                 <ul id="flightsList2"> 
-                    <li v-for="(value, key, index) in airlines_flights.flights" v-bind:value="key" style="margin-top: 25px;">   
+                    <li v-for="(value, key, index) in airlines_flights.flights" v-bind:value="key" style="margin-top: 25px;">  
+                        <!-- <img src="./ajax-loader.gif" /> -->
                         <button class="btn btn-primary btnFetchFlightStatus" v-bind:data-index="key">Submit to Oracles</button>    
                         {{ airlines_flights.airlines[value.airlineIndex].name }}                                                                            
                         {{ value.flightCode }}  
