@@ -409,7 +409,7 @@ contract FlightSuretyData {
             fund = false;
         }
         else if (statusCode == STATUS_CODE_LATE_AIRLINE) {
-            
+            fund = true;
         }
         else if (statusCode == STATUS_CODE_LATE_WEATHER) {
             fund = true;
