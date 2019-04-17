@@ -654,6 +654,7 @@ contract FlightSuretyData {
             requireIsCallerAuthorized
             external
             payable
+            returns(uint amounToFund)
     {
         require(passenger == tx.origin, "Contracts not allowed");
         require(funds[passenger] >= amount, "Insuficient funds");
@@ -661,7 +662,7 @@ contract FlightSuretyData {
         uint _amount = funds[passenger];
         funds[passenger] = funds[passenger].sub(_amount);
         
-        passenger.transfer(_amount);
+        return _amount;
     }
 
    /**

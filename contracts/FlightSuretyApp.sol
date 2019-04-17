@@ -249,6 +249,15 @@ contract FlightSuretyApp {
         return flightSuretyData.getPassengerFunds(msg.sender);
     }
 
+    function payFunds
+        (uint amount)        
+        external
+        payable {
+
+        uint amounToFund = flightSuretyData.payFunds(amount, msg.sender);
+        msg.sender.transfer(amounToFund);
+    }
+
 // endregion
 
 // Oracles
@@ -306,7 +315,6 @@ contract FlightSuretyApp {
          }
     }
 
-
 // endregion
 
 }   
@@ -327,4 +335,5 @@ contract FlightSuretyData {
     function registerOracle(address sender, uint value) external payable;
     function getMyIndexes (address sender) view external returns(uint8[3]);  
     function submitOracleResponse(uint8 index, address airline, string flightCode, string description, uint8 statusCode, address sender) external returns (bool);
+    function payFunds (uint amount, address passenger) external payable returns(uint amounToFund);
 }

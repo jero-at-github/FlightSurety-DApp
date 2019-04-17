@@ -62,10 +62,27 @@ module.exports = class Contract {
         
         self.flightSuretyApp.methods
             .fetchFlightStatus(flight.description, flight.flightCode, airline.address)
-            .send({ from: self.commonConfig.owner}, (error, result) => {                
+            .send({ from: self.commonConfig.owner, gas: this.defaultGas}, (error, result) => {                
                 if (error) {
                     alert(error);
                 }                
+            });
+    }
+
+    getFunds(amount, passenger, callback) {
+        
+        let self = this;
+        let _amount = self.web3.utils.toWei(amount.toString(), "ether");
+
+        self.flightSuretyApp.methods
+            .payFunds(_amount)
+            .send({ from: passenger, gas: this.defaultGas}, (error, result) => {                
+                if (error) {
+                    alert(error);
+                }  
+                else {
+                    callback();
+                }              
             });
     }
 

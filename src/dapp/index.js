@@ -136,6 +136,16 @@ require("./flightsurety.css");
                 }, 2000);                           
             });    
         }
+
+        function getFunds() {
+
+            let amount = document.querySelector("#funds").textContent;
+            contract.getFunds(amount, selectedPassanger, () => {
+                showFunds();
+                showBalance();                
+            });
+                        
+        }
         
         function initListeners() {
 
@@ -172,12 +182,15 @@ require("./flightsurety.css");
                 element.addEventListener("click", async (event) => {                
                     fetchFlightStatus(event);                    
                 });            
-            });            
-
-            refreshInfo();
-        }                           
+            });     
+            
+            document.querySelector("#btnFunds").addEventListener("click", async () => {      
+                getFunds();
+            });                
+        }                                   
 
         initListeners(); 
+        refreshInfo();
 
         contract.FlightStatusInfoHandler = (statusCode) => {
             
