@@ -207,7 +207,9 @@ contract FlightSuretyData {
     /*                                     SMART CONTRACT FUNCTIONS                             */
     /********************************************************************************************/
 
-    function isSuretyAlreadyBought(string description, string flightCode, address airline, address sender) public view returns (bool)
+    function isSuretyAlreadyBought(string description, string flightCode, address airline, address sender) public view 
+        requireIsCallerAuthorized 
+        returns (bool)
     {                
         bool result = false;
 
@@ -370,6 +372,7 @@ contract FlightSuretyData {
         string flightCode,
         uint256 updatedTimestamp,
         address airline) external
+        requireIsCallerAuthorized 
                                 
     {   
         // generate key     
@@ -398,7 +401,8 @@ contract FlightSuretyData {
         string flightCode,
         string description,
         uint8 statusCode)
-        internal        
+        internal   
+        requireIsCallerAuthorized      
     {
         bool fund = false;
 
@@ -437,13 +441,14 @@ contract FlightSuretyData {
     }
 
     // Generate a request for oracles to fetch flight information
-    function fetchFlightStatus
-                        (
-                            string description,
-                            string flightCode,        
-                            address airline,
-                            address sender
-                        ) external returns (uint8)
+    function fetchFlightStatus(
+            string description,
+            string flightCode,        
+            address airline,
+            address sender
+        ) external 
+        requireIsCallerAuthorized 
+        returns (uint8)
                         
     {
         uint8 index = getRandomIndex(sender);        
@@ -497,6 +502,7 @@ contract FlightSuretyData {
         (address sender, uint value)
         external
         payable
+        requireIsCallerAuthorized 
     {
         // Require registration fee
         require(value >= REGISTRATION_FEE, "Registration fee is required");
@@ -513,6 +519,7 @@ contract FlightSuretyData {
     function getMyIndexes (address sender)
         view
         external
+        requireIsCallerAuthorized 
         returns(uint8[3])
     {
         require(oracles[sender].isRegistered, "Not registered as an oracle");
@@ -534,6 +541,7 @@ contract FlightSuretyData {
                             address sender
                         ) 
                         external
+                        requireIsCallerAuthorized 
                         returns (bool)
     {
         require(
@@ -674,6 +682,7 @@ contract FlightSuretyData {
     function fundPassenger
             (address passenger, uint pricePaid)                                 
             private
+            requireIsCallerAuthorized 
     {        
         uint _fund = funds[passenger];
         uint _halfPricePaid = pricePaid.div(2);
