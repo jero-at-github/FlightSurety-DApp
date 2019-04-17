@@ -554,8 +554,8 @@ contract FlightSuretyData {
         // oracles respond with the *** same *** information       
         if (oracleResponses[key].responses[statusCode].length == MIN_RESPONSES) {
             
-            delete oracleResponses[key].responses[statusCode];
-            oracleResponses[key].isOpen = false;            
+            oracleResponses[key].isOpen = false;     
+            delete oracleResponses[key].responses[statusCode];                   
 
             emitStatus = true;
 
@@ -636,6 +636,7 @@ contract FlightSuretyData {
     /**
      *  @dev Credits payouts to insurees
     */
+    /*
     function creditInsurees
             (address passenger, uint fund) 
             requireIsCallerAuthorized
@@ -643,7 +644,7 @@ contract FlightSuretyData {
     {
         funds[passenger] = funds[passenger].add(fund);
     }
-    
+    */
 
     /**
      *  @dev Transfers eligible payout funds to insuree

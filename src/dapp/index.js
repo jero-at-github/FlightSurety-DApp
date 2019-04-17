@@ -241,9 +241,11 @@ require("./flightsurety.css");
 
         contract.FlightStatusInfoHandler = (statusCode) => {
             
-            vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = statusCode;            
-            showFunds();
-            flightResponseLoading = false;
+            if (flightResponseLoading) {
+                vueFlightsList2.airlines_flights.flights[flightIndex2].statusCode = statusCode;            
+                showFunds();
+                flightResponseLoading = false;
+            }            
         }
 
         function toStatusDescription(statusCode) {
